@@ -25,7 +25,7 @@ resource "aws_lambda_function" "graph" {
   runtime          = "dotnetcore3.1"
   timeout          = 30
   publish          = false
-  memory_size      = 128
+  memory_size      = 256
   role             = aws_iam_role.graph.arn
   environment {
     variables = {
