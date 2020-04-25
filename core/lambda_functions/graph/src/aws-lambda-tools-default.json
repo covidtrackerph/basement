@@ -1,0 +1,13 @@
+{
+  "Information": [
+    "Graph Lambda"
+  ],
+  "profile": "",
+  "region": "",
+  "configuration": "Release",
+  "framework": "netcoreapp3.1",
+  "function-runtime": "dotnetcore3.1",
+  "function-memory-size": 256,
+  "function-timeout": 30,
+  "function-handler": "Graph::Graph.LambdaEntry::RunAsync"
+}

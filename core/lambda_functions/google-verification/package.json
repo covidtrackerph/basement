@@ -1,0 +1,17 @@
+{
+  "name": "google-verification",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "tsc && cp package.json yarn.lock build && cd build && yarn --production"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.40",
+    "@types/node": "^13.7.0",
+    "@types/urijs": "^1.19.5",
+    "@types/uuid": "^7.0.0",
+    "typescript": "^3.7.5"
+  }
+}

@@ -1,3 +1,15 @@
+
+.vscode
+
+# REST samples
+**/*.rest
+
+# Ignore lambda function builds
+**/lambda_functions/*/build
+**/lambda_functions/*/function.zip
+
+# Ignore secrets bootstrap
+**/secrets
 # Local .terraform directories
 **/.terraform/*
 
