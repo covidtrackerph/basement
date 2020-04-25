@@ -1,6 +1,12 @@
 
 .vscode
 
+
+# files created during local testing
+*/aws.tf
+*/terraform.tfvars
+*/*.csv
+
 # REST samples
 **/*.rest
 
