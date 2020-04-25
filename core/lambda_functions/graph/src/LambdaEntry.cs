@@ -9,6 +9,7 @@ using GraphQL.Types;
 using Microsoft.Extensions.DependencyInjection;
 using Graph.Models;
 using AutoMapper;
+using System.Collections.Generic;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.LambdaJsonSerializer))]
 namespace Graph
@@ -70,13 +71,33 @@ namespace Graph
                 }
 
                 context.Logger.Log("GraphQL execution result: " + output);
-                return new APIGatewayProxyResponse { StatusCode = 200, Body = output };
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 200,
+                    Body = output,
+                    Headers = new Dictionary<string, string> {
+                        { "Content-Type", "application/json" },
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Headers", "*" },
+                        { "Access-Control-Allow-Method", "*" }
+                    }
+
+                };
             }
 
             catch (Exception ex)
             {
                 context.Logger.Log("Document exexuter exception " + ex);
-                return new APIGatewayProxyResponse { StatusCode = 500 };
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 500,
+                    Headers = new Dictionary<string, string> {
+                        { "Content-Type", "application/json" },
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Headers", "*" },
+                        { "Access-Control-Allow-Method", "*" }
+                    }
+                };
             }
         }
     }

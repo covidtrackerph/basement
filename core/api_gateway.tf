@@ -31,7 +31,13 @@ resource "aws_api_gateway_deployment" "covid_tracker" {
     aws_api_gateway_integration.google_verification,
     aws_api_gateway_resource.graph,
     aws_api_gateway_method.graphql,
-    aws_api_gateway_integration.graph
+    aws_api_gateway_integration.graph,
+    aws_api_gateway_method_response.graph_method_response_200,
+    aws_api_gateway_integration_response.graph_integration_response,
+    aws_api_gateway_method.graph_options,
+    aws_api_gateway_integration.graph_options_integration,
+    aws_api_gateway_integration_response.graph_options_integration_response,
+    aws_api_gateway_method_response.graph_options_response
   ]
 
   lifecycle {
@@ -60,6 +66,21 @@ resource "aws_api_gateway_method" "graphql" {
   authorization = "NONE"
 }
 
+resource "aws_api_gateway_method_response" "graph_method_response_200" {
+  rest_api_id = aws_api_gateway_rest_api.covid_tracker.id
+  resource_id = aws_api_gateway_resource.graph.id
+  http_method = aws_api_gateway_method.graphql.http_method
+  status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Headers" = true
+  }
+  depends_on = [
+    aws_api_gateway_method.graphql
+  ]
+}
+
 resource "aws_api_gateway_integration" "graph" {
   rest_api_id             = aws_api_gateway_rest_api.covid_tracker.id
   resource_id             = aws_api_gateway_resource.graph.id
@@ -69,6 +90,73 @@ resource "aws_api_gateway_integration" "graph" {
   uri                     = aws_lambda_function.graph.invoke_arn
 }
 
+resource "aws_api_gateway_integration_response" "graph_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.covid_tracker.id
+  resource_id = aws_api_gateway_resource.graph.id
+  http_method = aws_api_gateway_method.graphql.http_method
+  status_code = 200
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'",
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With'",
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'"
+  }
+  depends_on = [
+    aws_api_gateway_integration.graph,
+    aws_api_gateway_method_response.graph_method_response_200
+  ]
+}
+
+resource "aws_api_gateway_method" "graph_options" {
+  rest_api_id   = aws_api_gateway_rest_api.covid_tracker.id
+  resource_id   = aws_api_gateway_resource.graph.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "graph_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.covid_tracker.id
+  resource_id = aws_api_gateway_resource.graph.id
+  http_method = aws_api_gateway_method.graph_options.http_method
+  type        = "MOCK"
+}
+
+resource "aws_api_gateway_integration_response" "graph_options_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.covid_tracker.id
+  resource_id = aws_api_gateway_resource.graph.id
+  http_method = aws_api_gateway_method.graph_options.http_method
+
+  status_code = 200
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'",
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With'",
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.graph_options_integration,
+    aws_api_gateway_method_response.graph_options_response,
+  ]
+}
+
+resource "aws_api_gateway_method_response" "graph_options_response" {
+  rest_api_id = aws_api_gateway_rest_api.covid_tracker.id
+  resource_id = aws_api_gateway_resource.graph.id
+  http_method = aws_api_gateway_method.graph_options.http_method
+  status_code = 200
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Headers" = true
+  }
+  response_models = {
+    "application/json" = "Empty"
+  }
+  depends_on = [
+    aws_api_gateway_method.graph_options
+  ]
+}
 
 ##################################################
 # Case Collection Lambda                         #
