@@ -1,5 +1,14 @@
 ##################################################
-# Graph Lambda                         #
+# Shared                                #
+##################################################
+
+data "aws_iam_policy" "lambda_basic_execution" {
+  arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+
+##################################################
+# Graph Lambda                                   #
 ##################################################
 
 data "archive_file" "graph" {
@@ -68,6 +77,16 @@ data "aws_iam_policy_document" "graph" {
       "*"
     ]
   }
+}
+
+resource "aws_iam_role_policy_attachment" "graph_logging" {
+  role       = aws_iam_role.graph.name
+  policy_arn = data.aws_iam_policy.lambda_basic_execution.arn
+}
+
+resource "aws_cloudwatch_log_group" "graph" {
+  name              = "/aws/lambda/graph-${var.namespace}"
+  retention_in_days = 14
 }
 
 ##################################################
@@ -141,6 +160,17 @@ data "aws_iam_policy_document" "case_collection" {
       "*"
     ]
   }
+}
+
+
+resource "aws_iam_role_policy_attachment" "case_collection_logging" {
+  role       = aws_iam_role.case_collection.name
+  policy_arn = data.aws_iam_policy.lambda_basic_execution.arn
+}
+
+resource "aws_cloudwatch_log_group" "case_collection" {
+  name              = "/aws/lambda/case_collection-${var.namespace}"
+  retention_in_days = 14
 }
 
 ##################################################

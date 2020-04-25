@@ -21,3 +21,6 @@ Todo documentation.
 # Pipelines
 
 # Utilities
+
+# Diagram
+<img src="https://raw.githubusercontent.com/covidtrackerph/basement/master/graph.svg">
