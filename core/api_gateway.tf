@@ -32,12 +32,10 @@ resource "aws_api_gateway_deployment" "covid_tracker" {
     aws_api_gateway_resource.graph,
     aws_api_gateway_method.graphql,
     aws_api_gateway_integration.graph,
-    aws_api_gateway_method_response.graph_method_response_200,
-    aws_api_gateway_integration_response.graph_integration_response,
-    aws_api_gateway_method.graph_options,
-    aws_api_gateway_integration.graph_options_integration,
-    aws_api_gateway_integration_response.graph_options_integration_response,
-    aws_api_gateway_method_response.graph_options_response
+    aws_api_gateway_method.cors_method,
+    aws_api_gateway_integration.cors_integration,
+    aws_api_gateway_method_response.cors_methodresponse,
+    aws_api_gateway_integration_response.cors_integrationresponse
   ]
 
   lifecycle {
@@ -62,23 +60,8 @@ resource "aws_api_gateway_resource" "graph" {
 resource "aws_api_gateway_method" "graphql" {
   rest_api_id   = aws_api_gateway_rest_api.covid_tracker.id
   resource_id   = aws_api_gateway_resource.graph.id
-  http_method   = "ANY"
+  http_method   = "POST"
   authorization = "NONE"
-}
-
-resource "aws_api_gateway_method_response" "graph_method_response_200" {
-  rest_api_id = aws_api_gateway_rest_api.covid_tracker.id
-  resource_id = aws_api_gateway_resource.graph.id
-  http_method = aws_api_gateway_method.graphql.http_method
-  status_code = "200"
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = true,
-    "method.response.header.Access-Control-Allow-Methods" = true,
-    "method.response.header.Access-Control-Allow-Headers" = true
-  }
-  depends_on = [
-    aws_api_gateway_method.graphql
-  ]
 }
 
 resource "aws_api_gateway_integration" "graph" {
@@ -90,71 +73,63 @@ resource "aws_api_gateway_integration" "graph" {
   uri                     = aws_lambda_function.graph.invoke_arn
 }
 
-resource "aws_api_gateway_integration_response" "graph_integration_response" {
-  rest_api_id = aws_api_gateway_rest_api.covid_tracker.id
-  resource_id = aws_api_gateway_resource.graph.id
-  http_method = aws_api_gateway_method.graphql.http_method
-  status_code = 200
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'",
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With'",
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'"
-  }
-  depends_on = [
-    aws_api_gateway_integration.graph,
-    aws_api_gateway_method_response.graph_method_response_200
-  ]
-}
-
-resource "aws_api_gateway_method" "graph_options" {
+# CORS Method
+resource "aws_api_gateway_method" "cors_method" {
   rest_api_id   = aws_api_gateway_rest_api.covid_tracker.id
   resource_id   = aws_api_gateway_resource.graph.id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
 
-resource "aws_api_gateway_integration" "graph_options_integration" {
+# CORS Integration
+resource "aws_api_gateway_integration" "cors_integration" {
   rest_api_id = aws_api_gateway_rest_api.covid_tracker.id
   resource_id = aws_api_gateway_resource.graph.id
-  http_method = aws_api_gateway_method.graph_options.http_method
+  http_method = aws_api_gateway_method.cors_method.http_method
   type        = "MOCK"
+  request_templates = {
+    "application/json" = <<EOF
+{"statusCode": 200}
+EOF
+  }
+  depends_on = [aws_api_gateway_method.cors_method]
 }
 
-resource "aws_api_gateway_integration_response" "graph_options_integration_response" {
+# CORS Method Response
+resource "aws_api_gateway_method_response" "cors_methodresponse" {
   rest_api_id = aws_api_gateway_rest_api.covid_tracker.id
   resource_id = aws_api_gateway_resource.graph.id
-  http_method = aws_api_gateway_method.graph_options.http_method
-
-  status_code = 200
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'",
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With'",
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'"
-  }
-
-  depends_on = [
-    aws_api_gateway_integration.graph_options_integration,
-    aws_api_gateway_method_response.graph_options_response,
-  ]
-}
-
-resource "aws_api_gateway_method_response" "graph_options_response" {
-  rest_api_id = aws_api_gateway_rest_api.covid_tracker.id
-  resource_id = aws_api_gateway_resource.graph.id
-  http_method = aws_api_gateway_method.graph_options.http_method
-  status_code = 200
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = true,
-    "method.response.header.Access-Control-Allow-Methods" = true,
-    "method.response.header.Access-Control-Allow-Headers" = true
-  }
+  http_method = aws_api_gateway_method.cors_method.http_method
+  status_code = "200"
   response_models = {
     "application/json" = "Empty"
   }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+  depends_on = [aws_api_gateway_method.cors_method]
+}
+
+# CORS Integration Response
+resource "aws_api_gateway_integration_response" "cors_integrationresponse" {
+  rest_api_id = aws_api_gateway_rest_api.covid_tracker.id
+  resource_id = aws_api_gateway_resource.graph.id
+  http_method = aws_api_gateway_method.cors_method.http_method
+  status_code = aws_api_gateway_method_response.cors_methodresponse.status_code
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Methods" = "'OPTIONS,POST'",
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+  response_templates = {
+    "application/json" = <<EOF
+EOF
+  }
   depends_on = [
-    aws_api_gateway_method.graph_options
+    aws_api_gateway_method_response.cors_methodresponse,
+    aws_api_gateway_integration.cors_integration,
   ]
 }
 
