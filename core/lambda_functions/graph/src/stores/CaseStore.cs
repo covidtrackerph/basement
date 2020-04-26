@@ -69,6 +69,49 @@ namespace Graph.Stores
             }
         }
 
+        public async Task<IEnumerable<AgeGenderDistribution>> GetAgeGenderDistributionAsync(Accumulate type)
+        {
+            var builder = new SqlBuilder();
+            //note the 'where' in-line comment is required, it is a replacement token
+            var query = @"
+                select 
+                    agegroup, 
+                    sex, 
+                    count(*) as value
+                from 
+                    covidtracker.cases
+                /**where**/
+                group by 
+                    agegroup, sex
+                order by 
+                    sex;
+           ";
+
+            var selector = builder.AddTemplate(query);
+            string condition;
+            switch (type)
+            {
+                case Accumulate.Admitted:
+                    condition = "admitted and dateremoved is null";
+                    break;
+                case Accumulate.Died:
+                    condition = "removaltype = 'Died'";
+                    break;
+                case Accumulate.Recovered:
+                    condition = "removaltype = 'Recovered'";
+                    break;
+                default:
+                case Accumulate.Total:
+                    condition = "true";
+                    break;
+            }
+            builder.Where(condition);
+            using (var con = _connectionFactory())
+            {
+                return await con.QueryAsync<AgeGenderDistribution>(selector.RawSql);
+            }
+        }
+
         public async Task<IEnumerable<Case>> GetAllAsync()
         {
             var query = @"

@@ -11,5 +11,6 @@ namespace Graph
         Task<Case> GetByCaseNoAsync(string caseNo);
         Task<CaseStatistic> GetStatisticsAsync();
         Task<IEnumerable<Accumulation<DateTime, int>>> GetAccumulationAsync(Accumulate type);
+        Task<IEnumerable<AgeGenderDistribution>> GetAgeGenderDistributionAsync(Accumulate type);
     }
 }

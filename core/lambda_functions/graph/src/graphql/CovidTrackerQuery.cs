@@ -42,6 +42,15 @@ namespace Graph
                 description: "Get an accumulation of cases by accumulation type and ordered by date of confirmation descending"
             );
 
+            Field<ListGraphType<AgeGenderDistributionType>>(
+                "ageGenderDistribution",
+                arguments:
+                    new QueryArguments(new QueryArgument<NonNullGraphType<CumulativeTypeEnumType>> { Name = "type" }),
+                resolve:
+                    context => store.GetAgeGenderDistributionAsync(context.GetArgument<Accumulate>("type")),
+                description: "Get an accumulation of cases by accumulation type and ordered by date of confirmation descending"
+            );
+
         }
     }
 }
