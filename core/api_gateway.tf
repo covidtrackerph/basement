@@ -1,9 +1,23 @@
+resource "aws_api_gateway_domain_name" "covid_tracker_api_domain_name" {
+  regional_certificate_arn = aws_acm_certificate_validation.api_cert.certificate_arn
+  domain_name              = "api.trackncovph.jclarino.com"
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+}
+
+resource "aws_api_gateway_base_path_mapping" "covid_tracker_api_mapping" {
+  api_id      = aws_api_gateway_rest_api.covid_tracker.id
+  stage_name  = aws_api_gateway_deployment.covid_tracker.stage_name
+  domain_name = aws_api_gateway_domain_name.covid_tracker_api_domain_name.domain_name
+}
+
 resource "aws_api_gateway_rest_api" "covid_tracker" {
   name        = "covid-tracker-${var.namespace}"
   description = "Covid Tracker API Gateway for ${var.namespace}"
 
   endpoint_configuration {
-    types = ["EDGE"]
+    types = ["REGIONAL"]
   }
 
   tags = {

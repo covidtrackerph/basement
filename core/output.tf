@@ -29,3 +29,8 @@ output "covid_rds_endpoint" {
 output "api_url" {
   value = aws_api_gateway_deployment.covid_tracker.invoke_url
 }
+
+output "domain_validation" {
+  value = aws_acm_certificate.api_cert.domain_validation_options
+  description = "Certificate domain name validation options"
+}
