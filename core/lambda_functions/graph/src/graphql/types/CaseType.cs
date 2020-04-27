@@ -16,8 +16,10 @@ namespace Graph
             Field(q => q.RemovalType).Description("Type of removal. Recovered, Died");
             Field(q => q.DateRemoved, nullable: true).Description("Date of removal from confirmed cases");
             Field(q => q.Admitted, nullable: true).Description("Person was admitted");
+            Field(q => q.HealthStatus, nullable: true).Description("Health status of the person");
             Field(q => q.Region).Description("Region of residence");
-            Field(q => q.Residence).Description("City or province of residence");
+            Field(q => q.Province).Description("Province of residence");
+            Field(q => q.City).Description("City of residence");
             Field(q => q.InsertedAt, nullable: true).Description("Record insert date");
             Field(q => q.UpdatedAt, nullable: true).Description("Record update date");
         }

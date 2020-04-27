@@ -1,6 +1,8 @@
 import { APIGatewayProxyHandler, APIGatewayProxyResult } from "aws-lambda";
 
 const handler: APIGatewayProxyHandler = async event => {
+
+    
     console.log(`API GATEWAY Request ID: ${event.requestContext.requestId}`)
     await sleep(1);
     const response: APIGatewayProxyResult = {

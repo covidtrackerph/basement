@@ -124,7 +124,9 @@ namespace CaseCollection.Providers
                         RemovalType = q.RemovalType,
                         Admitted = q.Admitted == "Yes",
                         Region = q.RegionRes,
-                        Residence = q.ProvCityRes,
+                        Province = q.ProvRes,
+                        City = q.CityMunRes,
+                        HealthStatus = q.HealthStatus,
                         InsertedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow
                     });

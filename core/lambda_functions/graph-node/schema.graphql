@@ -1,0 +1,126 @@
+type Accumulation {
+  """Field accumulated against"""
+  accumulator: DateTime!
+
+  """Total value of the accumulation"""
+  value: Int!
+}
+
+input AccumulationInput {
+  """Type of the case"""
+  type: Type!
+}
+
+"""Case distribution by age and gender"""
+type AgeGenderDistribution {
+  """Age group"""
+  ageGroup: String
+
+  """Gender"""
+  sex: String
+
+  """Total value of distribution"""
+  value: Int
+}
+
+"""A COVID19 case"""
+type Case {
+  """Case number assigned by DOH"""
+  caseNo: String!
+
+  """Age of the case patient"""
+  age: Int
+
+  """Age group of the case patient"""
+  ageGroup: String
+
+  """Date of disease confirmation"""
+  dateConfirmed: DateTime
+
+  """Date of disease recovery"""
+  dateRecovered: DateTime
+
+  """Date of death"""
+  dateDied: DateTime
+
+  """Type of removal. Recovered or Died"""
+  removalType: String
+
+  """Date of removal"""
+  dateRemoved: DateTime
+
+  """Person was admitted to a health facility"""
+  admitted: Boolean
+
+  """Health status of person"""
+  healthStatus: String
+
+  """Region of residence"""
+  region: String
+
+  """Province of residence"""
+  province: String
+
+  """City of residence"""
+  city: String
+
+  """Date of entity insertion"""
+  insertedAt: DateTime!
+
+  """Date of entity modification"""
+  updatedAt: DateTime!
+}
+
+"""COVID19 case statistics"""
+type CaseStatistic {
+  """Total confirmed cases"""
+  total: Int!
+
+  """New confirmed cases"""
+  new: Int!
+
+  """Number of cases marked dead"""
+  dead: Int!
+
+  """New cases marked dead"""
+  deadNew: Int!
+
+  """Number of cases marked recovered"""
+  recovered: Int!
+
+  """New cases marked recovered"""
+  recoveredNew: Int!
+
+  """Number of cases marked admitted and have not died or recovered"""
+  admitted: Int!
+
+  """New cases marked admitted and have not died or recovered"""
+  admittedNew: Int!
+}
+
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
+
+type Query {
+  cases: [Case!]!
+  case(caseNo: String!): Case!
+  ageGenderDistribution(
+    """Type of the case"""
+    type: Type!
+  ): [AgeGenderDistribution!]!
+  accumulation(
+    """Type of the case"""
+    type: Type!
+  ): [Accumulation!]!
+  statistics: CaseStatistic!
+}
+
+"""Type of the case"""
+enum Type {
+  TOTAL
+  ADMITTED
+  DIED
+  RECOVERED
+}

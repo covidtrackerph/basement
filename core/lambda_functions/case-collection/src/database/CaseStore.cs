@@ -45,8 +45,10 @@ namespace CaseCollection
                             .MapVarchar("removaltype", q => q.RemovalType)
                             .MapTimeStamp("dateremoved", q => q.DateRemoved)
                             .MapBoolean("admitted", q => q.Admitted)
+                            .MapVarchar("healthstatus", q => q.HealthStatus)
                             .MapVarchar("region", q => q.Region)
-                            .MapVarchar("residence", q => q.Residence)
+                            .MapVarchar("province", q => q.Province)
+                            .MapVarchar("city", q => q.City)
                             .MapTimeStamp("insertedat", q => q.InsertedAt)
                             .MapTimeStamp("updatedat", q => q.UpdatedAt);
 

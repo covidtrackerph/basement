@@ -24,10 +24,9 @@ namespace Graph.Stores
             var query = @"
                 with data as (
                     select
-                        date_trunc('day', dateconfirmed) as date,
-                        count(*)
+                        /**select**/
                     from covidtracker.cases
-                    /**where**/
+                        /**where**/
                     group by 1
                     order by 1 asc nulls last
                 )
@@ -50,18 +49,23 @@ namespace Graph.Stores
             {
                 case Accumulate.Admitted:
                     condition = "admitted and dateremoved is null";
+                    builder.Select("date_trunc('day', dateconfirmed) as date");
                     break;
                 case Accumulate.Died:
                     condition = "removaltype = 'Died'";
+                     builder.Select("date_trunc('day', dateremoved) as date");
                     break;
                 case Accumulate.Recovered:
                     condition = "removaltype = 'Recovered'";
+                     builder.Select("date_trunc('day', dateremoved) as date");
                     break;
                 default:
                 case Accumulate.Total:
+                    builder.Select("date_trunc('day', dateconfirmed) as date");
                     condition = "true";
                     break;
             }
+            builder.Select("count(*)");
             builder.Where(condition);
             using (var con = _connectionFactory())
             {

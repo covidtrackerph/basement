@@ -13,16 +13,16 @@ data "aws_iam_policy" "lambda_basic_execution" {
 
 data "archive_file" "graph" {
   type        = "zip"
-  source_dir  = "${path.module}/lambda_functions/graph/build/"
-  output_path = "${path.module}/lambda_functions/graph/function.zip"
+  source_dir  = "${path.module}/lambda_functions/graph-node/build/"
+  output_path = "${path.module}/lambda_functions/graph-node/function.zip"
 }
 
 resource "aws_lambda_function" "graph" {
   filename         = data.archive_file.graph.output_path
   source_code_hash = filebase64sha256(data.archive_file.graph.output_path)
   function_name    = "graph"
-  handler          = "Graph::Graph.LambdaEntry::RunAsync"
-  runtime          = "dotnetcore3.1"
+  handler          = "index.handler"
+  runtime          = "nodejs12.x"
   timeout          = 30
   publish          = false
   memory_size      = 256

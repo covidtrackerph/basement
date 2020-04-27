@@ -31,7 +31,13 @@ namespace CaseCollection.Providers
         public string RegionRes { get; set; }
 
         // Province residence
-        public string ProvCityRes { get; set; }
+        public string ProvRes { get; set; }
+
+        // City residence
+        public string CityMunRes { get; set; }
+
+        // Health status
+        public string HealthStatus { get; set; }
     }
 
     public class DriveCaseCode : DriveCase

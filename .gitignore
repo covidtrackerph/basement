@@ -15,7 +15,7 @@
 **/lambda_functions/*/function.zip
 
 # Ignore secrets bootstrap
-**/secrets
+**/secrets.file
 # Local .terraform directories
 **/.terraform/*
 

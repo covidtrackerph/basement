@@ -15,8 +15,10 @@ namespace CaseCollection.Models
         public string RemovalType { get; set; }
         public DateTime? DateRemoved { get; set; }
         public bool? Admitted { get; set; }
+        public string HealthStatus { get; set; }
         public string Region { get; set; }
-        public string Residence { get; set; }
+        public string Province { get; set; }
+        public string City { get; set; }
         public DateTime? InsertedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }
