@@ -133,7 +133,7 @@ resource "aws_api_gateway_integration_response" "cors_integrationresponse" {
   http_method = aws_api_gateway_method.cors_method.http_method
   status_code = aws_api_gateway_method_response.cors_methodresponse.status_code
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Apollo-Tracing'",
     "method.response.header.Access-Control-Allow-Methods" = "'OPTIONS,POST'",
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
