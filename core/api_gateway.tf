@@ -1,6 +1,6 @@
 resource "aws_api_gateway_domain_name" "covid_tracker_api_domain_name" {
   regional_certificate_arn = aws_acm_certificate_validation.api_cert.certificate_arn
-  domain_name              = "api.trackncovph.jclarino.com"
+  domain_name              = local.api_domain
   endpoint_configuration {
     types = ["REGIONAL"]
   }
