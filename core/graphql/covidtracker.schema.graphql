@@ -171,6 +171,12 @@ type CaseStatistic {
 
   # New cases marked admitted and have not died or recovered
   admittedNew: Int!
+
+  # Number of cases that have not died or recovered
+  active: Int!
+
+  # New cases that have not died or recovered
+  activeNew: Int!
 }
 
 # Selection item for user interface
@@ -190,4 +196,5 @@ enum Type {
   ADMITTED
   DIED
   RECOVERED
+  ACTIVE
 }

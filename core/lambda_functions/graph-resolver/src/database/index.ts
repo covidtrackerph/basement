@@ -54,6 +54,9 @@ export async function getDailyStatisticAsync(type: CaseType) {
             datefield = `dateconfirmed`;
             where = `admitted and dateremoved is null`
             break;
+        case CaseType.ACTIVE:
+            datefield = `dateconfirmed`;
+            where = `dateremoved is null`
         default:
         case CaseType.TOTAL:
             datefield = `dateconfirmed`;
@@ -108,6 +111,9 @@ export async function getAccumulationAsync(type: CaseType) {
             datefield = `dateconfirmed`;
             where = `admitted and dateremoved is null`
             break;
+        case CaseType.ACTIVE:
+            datefield = `dateconfirmed`;
+            where = `dateremoved is null`
         default:
         case CaseType.TOTAL:
             datefield = `dateconfirmed`;
@@ -149,6 +155,8 @@ export async function getAgeGenderDistributionAsync(type: CaseType) {
         case CaseType.ADMITTED:
             where = `admitted and dateremoved is null`
             break;
+        case CaseType.ACTIVE:
+            where = `dateremoved is null`
         default:
         case CaseType.TOTAL:
             where = `true`
@@ -390,6 +398,28 @@ export async function getStatisticsAsync(region: string = '', province: string =
 	    order by
 	        dateconfirmed desc nulls last
 	    limit 1
+    ),
+    active as (
+	    select 
+	        count(*) 
+	    from 
+	        cases 
+	    where 
+	        isremoved = false
+	),
+	active_new as (
+	    select 
+            dateconfirmed,
+	        count(*) 
+	    from 
+	        cases
+	    where
+            isremoved = false
+	    group by
+            dateconfirmed
+	    order by
+            dateconfirmed desc nulls last
+	    limit 1
 	)
 	select 
 	    (select count from total) as total,
@@ -399,7 +429,9 @@ export async function getStatisticsAsync(region: string = '', province: string =
 	    (select count from dead) as dead,
 	    (select count from dead_new) as deadNew,
 	    (select count from admitted) as admitted,
-	    (select count from admitted_new) as admittedNew   
+        (select count from admitted_new) as admittedNew,
+        (select count from active) as active,
+	    (select count from active_new) as activeNew
     `
     query = formatSqlString(query, region, province, city);
     let client = await connectionFactory();
