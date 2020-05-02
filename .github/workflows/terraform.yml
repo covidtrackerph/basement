@@ -26,13 +26,11 @@ jobs:
       - name: 'Build Dotnet Lambda Functions'
         run: |
           cd core/lambda_functions
-          dotnet publish ./case-collection/src/ -c Release -o ./case-collection/build
-          dotnet publish ./graph/src/ -c Release -o ./graph/build
+          for func in $(find . -maxdepth 1 -type d -exec sh -c '[ -f "$0"/src/*.csproj ]' '{}' \; -print); do cd $func/src && dotnet publish -c Release -o ../build && cd ../..; done
       - name: 'Build NodeJS Lambda Functions'
         run: |
           cd core/lambda_functions
-          yarn --cwd ./graph-node && yarn --cwd ./graph-node build
-          yarn --cwd ./graph-resolver && yarn --cwd ./graph-resolver build
+          for func in $(find . -maxdepth 1 -type d -exec sh -c '[ -f "$0"/package.json ]' '{}' \; -print); do cd $func && yarn && yarn build && cd ..; done
       - name: 'Terraform Format'
         uses: hashicorp/terraform-github-actions@master
         with:
