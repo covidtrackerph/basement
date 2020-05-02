@@ -9,10 +9,12 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@master
 
+      - name: 'Change workspace'
+        run : |
+        cd core
+
       - name: 'Terraform Format'
         uses: hashicorp/terraform-github-actions@master
-        run : |
-          cd core
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'fmt'
