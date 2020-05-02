@@ -53,14 +53,3 @@ const handler: Handler<AWSAppSyncEvent<keyof typeof CaseFields>, any> = async (e
 }
 
 export { handler };
-
-
-handler({
-    field: 'city',
-    args: {
-
-    }
-}, null, (err, result) => {
-    console.log(err)
-    console.log(result)
-})

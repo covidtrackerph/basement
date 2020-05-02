@@ -29,11 +29,6 @@ type Query {
     type: Type!
   ): [Accumulation!]!
 
-  dailyStatistic(
-    # Type of the case
-    type: Type!
-  ): [DailyStatistic!]!
-
   statistics(
     # Region of the case
     region: String,
@@ -64,6 +59,10 @@ type Query {
     region: String
   ): [SelectionItem]
   
+  dailyStatistic(
+    # Type of the case
+    type: Type!
+  ): [DailyStatistic!]
 }
 
 type Accumulation {
@@ -183,7 +182,6 @@ type SelectionItem {
   value: String
 }
 
-# The javascript `Date` as string. Type represents date and time as the ISO Date string. 
 scalar AWSDateTime
 
 # Type of the case
