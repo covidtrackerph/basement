@@ -43,7 +43,7 @@ resource "aws_cloudfront_distribution" "appsync_distribution" {
 
   viewer_certificate {
     acm_certificate_arn = aws_acm_certificate_validation.graph_cert_east_1.certificate_arn
-    ssl_support_method = "sni-only"
+    ssl_support_method  = "sni-only"
   }
 
   price_class = "PriceClass_200"
