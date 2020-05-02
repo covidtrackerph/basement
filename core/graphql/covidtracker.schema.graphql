@@ -5,12 +5,12 @@ schema {
 type Query {
 
   cases(
-    # Search query
-    query: String,
-    # Province of the city
-    province: String,
-    # Region of the city
+    # Region of the case
     region: String,
+    # Province of the case
+    province: String,
+    # City of the case
+    city: String,
     # Pagination offset
     offset: Int,
     # Pagination limit
