@@ -12,6 +12,10 @@ resource "aws_api_gateway_base_path_mapping" "covid_tracker_api_mapping" {
   domain_name = aws_api_gateway_domain_name.covid_tracker_api_domain_name.domain_name
 }
 
+# =========================================================== #
+# API Gateway for CovidTracker REST resources                 #
+# =========================================================== #
+
 resource "aws_api_gateway_rest_api" "covid_tracker" {
   name        = "covid-tracker-${var.namespace}"
   description = "Covid Tracker API Gateway for ${var.namespace}"
@@ -56,13 +60,13 @@ resource "aws_api_gateway_deployment" "covid_tracker" {
     create_before_destroy = true
   }
 
-  stage_name = "prod"
+  stage_name = var.namespace
 }
 
 
 
 ##################################################
-# Graph Lambda                         #
+# Graph Lambda                                   #
 ##################################################
 
 resource "aws_api_gateway_resource" "graph" {

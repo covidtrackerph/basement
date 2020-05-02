@@ -220,3 +220,86 @@ resource "aws_iam_role" "google_verification" {
 }
 POLICY
 }
+
+
+##################################################
+# GraphQL Resolver Lambda                        #
+##################################################
+
+data "archive_file" "graph_resolver" {
+  type        = "zip"
+  source_dir  = "${path.module}/lambda_functions/graph-resolver/build/"
+  output_path = "${path.module}/lambda_functions/graph-resolver/function.zip"
+}
+
+resource "aws_lambda_function" "graph_resolver" {
+  filename         = data.archive_file.graph_resolver.output_path
+  source_code_hash = filebase64sha256(data.archive_file.graph_resolver.output_path)
+  function_name    = "graph-resolver"
+  handler          = "index.handler"
+  runtime          = "nodejs12.x"
+  timeout          = 30
+  publish          = false
+  memory_size      = 256
+  role             = aws_iam_role.graph_resolver.arn
+  environment {
+    variables = {
+      COVIDTRACKER_DB_CONNECTION_SECRET_ID = "covidrds",
+      environment                          = "Production"
+    }
+  }
+}
+
+resource "aws_lambda_permission" "graph_resolver" {
+  statement_id  = "AllowExecutionFromAppSync"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.graph_resolver.function_name
+  principal     = "appsync.amazonaws.com"
+}
+
+resource "aws_iam_role" "graph_resolver" {
+  name               = "graph-resolver"
+  assume_role_policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": ["lambda.amazonaws.com", "appsync.amazonaws.com"]
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy" "graph_resolver" {
+  name   = "default"
+  role   = aws_iam_role.graph_resolver.id
+  policy = data.aws_iam_policy_document.graph_resolver.json
+}
+
+data "aws_iam_policy_document" "graph_resolver" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "secretsmanager:*",
+    ]
+    resources = [
+      "*"
+    ]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "graph_resolver_logging" {
+  role       = aws_iam_role.graph_resolver.name
+  policy_arn = data.aws_iam_policy.lambda_basic_execution.arn
+}
+
+resource "aws_cloudwatch_log_group" "graph_resolver" {
+  name              = "/aws/lambda/graph-resolver-${var.namespace}"
+  retention_in_days = 14
+}

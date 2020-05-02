@@ -31,6 +31,16 @@ output "api_url" {
 }
 
 output "domain_validation" {
-  value = aws_acm_certificate.api_cert.domain_validation_options
+  value       = aws_acm_certificate.api_cert.domain_validation_options
   description = "Certificate domain name validation options"
+}
+
+output "api_key" {
+  value       = aws_appsync_api_key.covidtracker_key
+  description = "AppSync API Key"
+}
+
+output "graph_domain_validation" {
+  value       = aws_acm_certificate.graph_cert.domain_validation_options
+  description = "GraphQL Certificate domain name validation options"
 }

@@ -1,8 +1,3 @@
-variable "covid_rds_password" {
-  type        = string
-  description = "Password for Covid RDS"
-}
-
 variable "region" {
   type        = string
   description = "AWS Region"
