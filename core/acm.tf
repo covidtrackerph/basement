@@ -3,7 +3,7 @@ resource "aws_acm_certificate" "api_cert" {
   validation_method = "DNS"
 
   tags = {
-    Name = "API Endpoint Covid Tracker"
+    Name        = "API Endpoint Covid Tracker"
     Environment = var.namespace
   }
 
@@ -21,7 +21,7 @@ resource "aws_acm_certificate" "graph_cert" {
   validation_method = "DNS"
 
   tags = {
-    Name = "Graph endpoint covidtracker"
+    Name        = "Graph endpoint covidtracker"
     Environment = var.namespace
   }
 

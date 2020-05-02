@@ -14,9 +14,9 @@ resource "aws_cloudfront_distribution" "appsync_distribution" {
   is_ipv6_enabled = true
   comment         = "Managed by Terraform"
 
-#   aliases = [
-#     local.graph_domain
-#   ]
+  #   aliases = [
+  #     local.graph_domain
+  #   ]
 
   origin {
 
