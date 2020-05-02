@@ -425,13 +425,13 @@ export async function getStatisticsAsync(region: string = '', province: string =
 	    (select count from total) as total,
 	    (select count from total_new) as new,
 	    (select count from recovered) as recovered,
-	    (select count from recovered_new) as recoveredNew,
+	    (select count from recovered_new) as "recoveredNew",
 	    (select count from dead) as dead,
-	    (select count from dead_new) as deadNew,
+	    (select count from dead_new) as "deadNew",
 	    (select count from admitted) as admitted,
-        (select count from admitted_new) as admittedNew,
+        (select count from admitted_new) as "admittedNew",
         (select count from active) as active,
-	    (select count from active_new) as activeNew
+	    (select count from active_new) as "activeNew"
     `
     query = formatSqlString(query, region, province, city);
     let client = await connectionFactory();
