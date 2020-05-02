@@ -13,6 +13,26 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@master
       - run: 'cp -a core/$BASEMENT_ENV/. core/'
+      - name: 'Setup dotnet'
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.100'
+      - name: Setup NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - name: Setup Yarn
+        run: npm install -g Yarn
+      - name: 'Build Dotnet Lambda Functions'
+        run: |
+          cd core/lambda_functions
+          dotnet publish ./case-collection/src/ -c Release -o ./case-collection/build
+          dotnet publish ./graph/src/ -c Release -o ./graph/build
+      - name: 'Build Dotnet NodeJS Functions'
+        run: |
+          cd core/lambda_functions
+          yarn --cwd ./graph-node build
+          yarn --cwd ./graph-resolver build
       - name: 'Terraform Format'
         uses: hashicorp/terraform-github-actions@master
         with:
