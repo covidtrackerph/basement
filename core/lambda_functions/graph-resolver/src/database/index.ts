@@ -149,29 +149,29 @@ export async function getAllAsync(
         where
             case
             when
-                length('{0}') = 0
+                length({0}) = 0
             then
                 true
             else
-                region = '{0}'
+                region = {0}
             end
         and
             case
             when
-                length('{1}') = 0
+                length({1}) = 0
             then
                 true
             else
-                province = '{1}'
+                province = {1}
             end
         and
             case
             when
-                length('{2}') = 0
+                length({2}) = 0
             then
                 true
             else
-                city = '{2}'
+                city = {2}
             end
             order by
             dateconfirmed desc
@@ -233,29 +233,29 @@ export async function getStatisticsAsync(region: string = '', province: string =
 	    where
 	        case
 	        when
-	            length('{0}') = 0
+	            length({0}) = 0
 	        then
 	            true
 	        else
-	            region = '{0}'
+	            region = {0}
 	        end
 	    and
 		 	case
 	        when
-	            length('{1}') = 0
+	            length({1}) = 0
 	        then
 	            true
 	        else
-	            province = '{1}'
+	            province = {1}
 	        end
 		and
 		 	case
 	        when
-	            length('{2}') = 0
+	            length({2}) = 0
 	        then
 	            true
 	        else
-	            city = '{2}'
+	            city = {2}
 	        end
 	),
 	caseadmit as (
@@ -399,7 +399,7 @@ export async function searchRegionsAsync(query: string) {
             region asc
     )
     select * from regions
-    where value ~ '{0}'
+    where value ~ {0}
     `
     sql = formatSqlString(sql, query)
     let client = await connectionFactory();
@@ -432,11 +432,11 @@ export async function searchProvincesAsync(query: string, region: string = '') {
     where
         case
         when
-            length('{0}') = 0
+            length({0}) = 0
         then
             true
         else
-            region = '{0}'
+            region = {0}
         end
     group by 
         province
@@ -450,7 +450,7 @@ export async function searchProvincesAsync(query: string, region: string = '') {
         province asc
     )
     select * from provinces
-    where value ~ '{1}'
+    where value ~ {1}
     `
     sql = formatSqlString(sql, region, query)
     let client = await connectionFactory();
@@ -486,20 +486,20 @@ export async function searchCitiesAsync(query: string, province: string = '', re
         where
             case
             when
-                length('{2}') = 0
+                length({2}) = 0
             then
                 true
             else
-                region = '{2}'
+                region = {2}
             end
         and
              case
             when
-                length('{1}') = 0
+                length({1}) = 0
             then
                 true
             else
-                province = '{1}'
+                province = {1}
             end
         group by 
             city
@@ -513,7 +513,7 @@ export async function searchCitiesAsync(query: string, province: string = '', re
             city asc
     )
     select * from cities
-    where value ~ '{0}'
+    where value ~ {0}
     `
     sql = formatSqlString(sql, query, province, region)
     let client = await connectionFactory();

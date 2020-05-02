@@ -25,19 +25,19 @@ const handler: Handler<AWSAppSyncEvent<keyof typeof CaseFields>, any> = async (e
                 callback(null, await db.getByCaseNoAsync(args!.caseNo));
                 break;
             case 'cases':
-                callback(null, await db.getAllAsync(args?.region || '', args?.province || '', args?.city || '', args?.offset || 0, args?.limit || 10));
+                callback(null, await db.getAllAsync(args!.region || '', args!.province || '', args!.city || '', args!.offset || 0, args!.limit || 10));
                 break;
             case 'statistics':
-                callback(null, await db.getStatisticsAsync(args?.region || '', args?.province || '', args?.city || ''));
+                callback(null, await db.getStatisticsAsync(args!.region || '', args!.province || '', args!.city || ''));
                 break;
             case 'region':
-                callback(null, await db.searchRegionsAsync(args?.query || ''))
+                callback(null, await db.searchRegionsAsync(args!.query || ''))
                 break;
             case 'province':
-                callback(null, await db.searchProvincesAsync(args?.query || '', args?.region || ''))
+                callback(null, await db.searchProvincesAsync(args!.query || '', args!.region || ''))
                 break;
             case 'city':
-                callback(null, await db.searchCitiesAsync(args?.query || '', args?.province || '', args?.region || ''))
+                callback(null, await db.searchCitiesAsync(args!.query || '', args!.province || '', args!.region || ''))
                 break;
             default:
                 callback(`Unknown field: ${field}`, null)
@@ -49,3 +49,14 @@ const handler: Handler<AWSAppSyncEvent<keyof typeof CaseFields>, any> = async (e
 }
 
 export { handler };
+
+
+handler({
+    field: 'city',
+    args: {
+        
+    }
+}, null, (err,result) => {
+    console.log(err)
+    console.log(result)
+})
