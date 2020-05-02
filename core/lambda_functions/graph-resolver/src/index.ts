@@ -5,7 +5,10 @@ enum CaseFields {
     case,
     accumulation,
     statistics,
-    ageGenderDistribution
+    ageGenderDistribution,
+    region,
+    province,
+    city
 }
 
 const handler: Handler<AWSAppSyncEvent<keyof typeof CaseFields>, any> = async (event, _, callback) => {
@@ -22,10 +25,19 @@ const handler: Handler<AWSAppSyncEvent<keyof typeof CaseFields>, any> = async (e
                 callback(null, await db.getByCaseNoAsync(args!.caseNo));
                 break;
             case 'cases':
-                callback(null, await db.getAllAsync());
+                callback(null, await db.getAllAsync(args?.region || '', args?.province || '', args?.city || '', args?.offset || 0, args?.limit || 10));
                 break;
             case 'statistics':
-                callback(null, await db.getStatisticsAsync());
+                callback(null, await db.getStatisticsAsync(args?.region || '', args?.province || '', args?.city || ''));
+                break;
+            case 'region':
+                callback(null, await db.searchRegionsAsync(args?.query || ''))
+                break;
+            case 'province':
+                callback(null, await db.searchProvincesAsync(args?.query || '', args?.region || ''))
+                break;
+            case 'city':
+                callback(null, await db.searchCitiesAsync(args?.query || '', args?.province || '', args?.region || ''))
                 break;
             default:
                 callback(`Unknown field: ${field}`, null)
