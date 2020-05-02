@@ -22,13 +22,13 @@ jobs:
         with:
           node-version: '10.x'
       - name: Setup Yarn
-        run: npm install -g Yarn
+        run: npm install -g yarn
       - name: 'Build Dotnet Lambda Functions'
         run: |
           cd core/lambda_functions
           dotnet publish ./case-collection/src/ -c Release -o ./case-collection/build
           dotnet publish ./graph/src/ -c Release -o ./graph/build
-      - name: 'Build Dotnet NodeJS Functions'
+      - name: 'Build NodeJS Lambda Functions'
         run: |
           cd core/lambda_functions
           yarn --cwd ./graph-node build
