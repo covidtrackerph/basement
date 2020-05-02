@@ -14,9 +14,9 @@ resource "aws_cloudfront_distribution" "appsync_distribution" {
   is_ipv6_enabled = true
   comment         = "Managed by Terraform"
 
-  # aliases = [
-  #   local.graph_domain
-  # ]
+  aliases = [
+    local.graph_domain
+  ]
 
   origin {
 
@@ -42,7 +42,7 @@ resource "aws_cloudfront_distribution" "appsync_distribution" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn = aws_acm_certificate_validation.graph_cert_east_1.certificate_arn
   }
 
   price_class = "PriceClass_200"
