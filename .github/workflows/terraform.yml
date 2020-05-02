@@ -31,8 +31,8 @@ jobs:
       - name: 'Build NodeJS Lambda Functions'
         run: |
           cd core/lambda_functions
-          yarn --cwd ./graph-node build
-          yarn --cwd ./graph-resolver build
+          yarn --cwd ./graph-node && yarn --cwd ./graph-node build
+          yarn --cwd ./graph-resolver && yarn --cwd ./graph-resolver build
       - name: 'Terraform Format'
         uses: hashicorp/terraform-github-actions@master
         with:
