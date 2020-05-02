@@ -29,6 +29,11 @@ type Query {
     type: Type!
   ): [Accumulation!]!
 
+  dailyStatistic(
+    # Type of the case
+    type: Type!
+  ): [DailyStatistic!]!
+
   statistics(
     # Region of the case
     region: String,
@@ -66,6 +71,14 @@ type Accumulation {
   accumulator: AWSDateTime!
 
   # Total value of the accumulation
+  value: Int!
+}
+
+type DailyStatistic {
+  # Date
+  date: AWSDateTime!
+
+  # Total value of the date
   value: Int!
 }
 

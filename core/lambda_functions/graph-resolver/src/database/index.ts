@@ -8,6 +8,7 @@ import { CaseStatistic } from '../models/case-statistic';
 import { AgeGenderDistribution } from '../models/age-gender-distribution';
 import { Case } from '../models/case';
 import { SelectionItem } from '../models/residence';
+import { DailyStatistic } from '../models/statistic';
 
 async function connectionFactory() {
     const { connectionString } = await getSecretValue<CovidRDS>(process.env.COVIDTRACKER_DB_CONNECTION_SECRET_ID!);
@@ -22,6 +23,47 @@ async function connectionFactory() {
         database: connection['Database'],
         port: parseInt(connection['Port'])
     })
+}
+
+export async function getDailyStatisticAsync(type: CaseType) {
+    let query = `
+    select
+        date_trunc('day', {0}) as date,
+        count(*) as value
+    from 
+        covidtracker.cases
+    where
+        {1}
+    group by 1
+    order by 1 asc nulls last
+    `;
+
+    let datefield = ``;
+    let where = ``;
+
+    switch (type) {
+        case CaseType.RECOVERED:
+            datefield = `dateremoved`;
+            where = `removaltype = 'Recovered'`
+            break;
+        case CaseType.DIED:
+            datefield = `dateremoved`;
+            where = `removaltype = 'Died'`
+            break;
+        case CaseType.ADMITTED:
+            datefield = `dateconfirmed`;
+            where = `admitted and dateremoved is null`
+            break;
+        default:
+        case CaseType.TOTAL:
+            datefield = `dateconfirmed`;
+            where = `true`
+            break;
+    }
+    query = formatString(query, datefield, where);
+    let client = await connectionFactory();
+    client.connect();
+    return await client.query<DailyStatistic>(query).then(({ rows }) => rows).finally(() => { client.end() })
 }
 
 export async function getAccumulationAsync(type: CaseType) {
@@ -119,12 +161,12 @@ export async function getAgeGenderDistributionAsync(type: CaseType) {
 }
 
 export async function getAllAsync(
-    region: string = '', 
-    province: string = '', 
+    region: string = '',
+    province: string = '',
     city: string = '',
     offset: number = 0,
     limit: number = 10
- ) {
+) {
     let query = `
         select
             caseid as "caseId",

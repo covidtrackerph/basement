@@ -8,7 +8,8 @@ enum CaseFields {
     ageGenderDistribution,
     region,
     province,
-    city
+    city,
+    dailyStatistic
 }
 
 const handler: Handler<AWSAppSyncEvent<keyof typeof CaseFields>, any> = async (event, _, callback) => {
@@ -17,6 +18,9 @@ const handler: Handler<AWSAppSyncEvent<keyof typeof CaseFields>, any> = async (e
         switch (field) {
             case 'accumulation':
                 callback(null, await db.getAccumulationAsync(args!.type));
+                break;
+            case 'dailyStatistic':
+                callback(null, await db.getDailyStatisticAsync(args!.type));
                 break;
             case 'ageGenderDistribution':
                 callback(null, await db.getAgeGenderDistributionAsync(args!.type))
@@ -54,9 +58,9 @@ export { handler };
 handler({
     field: 'city',
     args: {
-        
+
     }
-}, null, (err,result) => {
+}, null, (err, result) => {
     console.log(err)
     console.log(result)
 })
