@@ -4,9 +4,9 @@ provider "aws" {
 }
 
 provider "aws" {
-    version = "~> 2.59.0"
+  version = "~> 2.59.0"
   region  = "us-east-1"
-  alias = "us_east_1"
+  alias   = "us_east_1"
 }
 
 terraform {
