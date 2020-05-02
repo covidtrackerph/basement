@@ -77,6 +77,7 @@ module "appsync_queries" {
     "ageGenderDistribution",
     "region",
     "province",
-    "city"
+    "city",
+    "dailyStatistic"
   ]
 }

@@ -62,7 +62,7 @@ type Query {
   dailyStatistic(
     # Type of the case
     type: Type!
-  ): [DailyStatistic!]
+  ): [DailyStatistic!]!
 }
 
 type Accumulation {
