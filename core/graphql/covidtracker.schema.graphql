@@ -1,19 +1,59 @@
 schema {
     query: Query
 }
+
 type Query {
-  cases: [Case!]!
+
+  cases(
+    # Search query
+    query: String,
+    # Province of the city
+    province: String,
+    # Region of the city
+    region: String,
+    # Pagination offset
+    offset: Int,
+    # Pagination limit
+    limit: Int
+  ): [Case!]!
+
   case(caseNo: String!): Case!
+
   ageGenderDistribution(
     # Type of the case
     type: Type!
   ): [AgeGenderDistribution!]!
+
   accumulation(
     # Type of the case
     type: Type!
   ): [Accumulation!]!
+
   statistics: CaseStatistic!
+
+  region(
+    # Search query
+    query: String
+  ): [SelectionItem]
+
+  province(
+    # Search query
+    query: String,
+    # Region of the province
+    region: String
+  ): [SelectionItem]
+
+  city(
+    # Search query
+    query: String,
+    # Province of the city
+    province: String,
+    # Region of the city
+    region: String
+  ): [SelectionItem]
+  
 }
+
 type Accumulation {
   # Field accumulated against
   accumulator: AWSDateTime!
@@ -112,6 +152,15 @@ type CaseStatistic {
 
   # New cases marked admitted and have not died or recovered
   admittedNew: Int!
+}
+
+# Selection item for user interface
+type SelectionItem {
+  # User interface display
+  display: String
+
+  # Actual value
+  value: String
 }
 
 # The javascript `Date` as string. Type represents date and time as the ISO Date string. 

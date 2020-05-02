@@ -74,6 +74,9 @@ module "appsync_queries" {
     "cases",
     "accumulation",
     "statistics",
-    "ageGenderDistribution"
+    "ageGenderDistribution",
+    "region",
+    "province",
+    "city"
   ]
 }
