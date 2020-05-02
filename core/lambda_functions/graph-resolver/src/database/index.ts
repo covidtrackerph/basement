@@ -57,6 +57,7 @@ export async function getDailyStatisticAsync(type: CaseType) {
         case CaseType.ACTIVE:
             datefield = `dateconfirmed`;
             where = `dateremoved is null`
+            break;
         default:
         case CaseType.TOTAL:
             datefield = `dateconfirmed`;
@@ -114,6 +115,7 @@ export async function getAccumulationAsync(type: CaseType) {
         case CaseType.ACTIVE:
             datefield = `dateconfirmed`;
             where = `dateremoved is null`
+            break;
         default:
         case CaseType.TOTAL:
             datefield = `dateconfirmed`;
@@ -157,6 +159,7 @@ export async function getAgeGenderDistributionAsync(type: CaseType) {
             break;
         case CaseType.ACTIVE:
             where = `dateremoved is null`
+            break;
         default:
         case CaseType.TOTAL:
             where = `true`
