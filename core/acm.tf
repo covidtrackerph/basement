@@ -32,5 +32,6 @@ resource "aws_acm_certificate" "graph_cert_east_1" {
 }
 
 resource "aws_acm_certificate_validation" "graph_cert_east_1" {
+  provider          = aws.us_east_1
   certificate_arn = aws_acm_certificate.graph_cert_east_1.arn
 }
