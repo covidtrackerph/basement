@@ -1,0 +1,51 @@
+name: 'Infra Terraform Apply'
+on:
+  push:
+    branches:
+        - master
+env:
+  BASEMENT_ENV: prod
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@master
+      - run: 'cp -a core/$BASEMENT_ENV/. core/'
+      - name: 'Setup dotnet'
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.100'
+      - name: Setup NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - name: Setup Yarn
+        run: npm install -g yarn
+      - name: 'Build Dotnet Lambda Functions'
+        run: |
+          cd core/lambda_functions
+          for func in $(find . -maxdepth 1 -type d -exec sh -c '[ -f "$0"/src/*.csproj ]' '{}' \; -print); do cd $func/src && dotnet publish -c Release -o ../build && cd ../..; done
+      - name: 'Build NodeJS Lambda Functions'
+        run: |
+          cd core/lambda_functions
+          for func in $(find . -maxdepth 1 -type d -exec sh -c '[ -f "$0"/package.json ]' '{}' \; -print); do cd $func && yarn && yarn build && cd ..; done
+      - name: 'Terraform Init'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.23
+          tf_actions_subcommand: 'init'
+          tf_actions_working_dir: 'core'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Terraform Apply'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.23
+          tf_actions_subcommand: 'apply'
+          tf_actions_working_dir: 'core'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
