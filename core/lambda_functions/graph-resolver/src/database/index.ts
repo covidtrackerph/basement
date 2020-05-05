@@ -25,7 +25,7 @@ async function connectionFactory() {
     })
 }
 
-export async function getDailyStatisticAsync(type: CaseType) {
+export async function getDailyStatisticAsync(type: CaseType, region?: string, province?: string, city? :string) {
     let query = `
     select
         date_trunc('day', {0}) as date,
@@ -34,12 +34,43 @@ export async function getDailyStatisticAsync(type: CaseType) {
         covidtracker.cases
     where
         {1}
+        {2}
     group by 1
     order by 1 asc nulls last
     `;
 
     let datefield = ``;
     let where = ``;
+    let regionQuery = `
+        and
+        case
+            when
+                length({0}) = 0
+            then
+                true
+            else
+                region = {0}
+            end
+        and
+            case
+            when
+                length({1}) = 0
+            then
+                true
+            else
+                province = {1}
+            end
+        and
+            case
+            when
+                length({2}) = 0
+            then
+                true
+            else
+                city = {2}
+            end
+    `;
+    regionQuery = formatSqlString(regionQuery, region, province, city);
 
     switch (type) {
         case CaseType.RECOVERED:
@@ -64,7 +95,7 @@ export async function getDailyStatisticAsync(type: CaseType) {
             where = `true`
             break;
     }
-    query = formatString(query, datefield, where);
+    query = formatString(query, datefield, where, regionQuery);
     let client = await connectionFactory();
     client.connect();
     return await client.query<DailyStatistic>(query).then(({ rows }) => rows).finally(() => { client.end() })

@@ -20,7 +20,7 @@ const handler: Handler<AWSAppSyncEvent<keyof typeof CaseFields>, any> = async (e
                 callback(null, await db.getAccumulationAsync(args!.type));
                 break;
             case 'dailyStatistic':
-                callback(null, await db.getDailyStatisticAsync(args!.type));
+                callback(null, await db.getDailyStatisticAsync(args!.type, args!.region || '', args!.province || '', args!.city || ''));
                 break;
             case 'ageGenderDistribution':
                 callback(null, await db.getAgeGenderDistributionAsync(args!.type))
