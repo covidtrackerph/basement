@@ -7,7 +7,7 @@ resource "aws_cloudwatch_event_rule" "covid_drop_collection" {
 
 resource "aws_cloudwatch_event_target" "covid_collection_target" {
   arn       = aws_lambda_function.case_collection.arn
-  rule      = aws_cloudwatch_event_rule.covid_drop_collection
+  rule      = aws_cloudwatch_event_rule.covid_drop_collection.name
   target_id = "covid-data-collection"
   input     = "{\"test\":\"collect\"}"
 }
