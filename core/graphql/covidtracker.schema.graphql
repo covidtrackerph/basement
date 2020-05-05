@@ -15,19 +15,19 @@ type Query {
     offset: Int,
     # Pagination limit
     limit: Int
-  ): [Case!]!
+  ): [Case!]
 
-  case(caseNo: String!): Case!
+  case(caseNo: String!): Case
 
   ageGenderDistribution(
     # Type of the case
     type: Type!
-  ): [AgeGenderDistribution!]!
+  ): [AgeGenderDistribution!]
 
   accumulation(
     # Type of the case
     type: Type!
-  ): [Accumulation!]!
+  ): [Accumulation!]
 
   statistics(
     # Region of the case
@@ -36,7 +36,7 @@ type Query {
     province: String,
     # City of the case
     city: String
-  ): CaseStatistic!
+  ): CaseStatistic
 
   region(
     # Search query
@@ -62,23 +62,23 @@ type Query {
   dailyStatistic(
     # Type of the case
     type: Type!
-  ): [DailyStatistic!]!
+  ): [DailyStatistic!]
 }
 
 type Accumulation {
   # Field accumulated against
-  accumulator: AWSDateTime!
+  accumulator: AWSDateTime
 
   # Total value of the accumulation
-  value: Int!
+  value: Int
 }
 
 type DailyStatistic {
   # Date
-  date: AWSDateTime!
+  date: AWSDateTime
 
   # Total value of the date
-  value: Int!
+  value: Int
 }
 
 input AccumulationInput {
@@ -140,43 +140,43 @@ type Case {
   city: String
 
   # Date of entity insertion
-  insertedAt: AWSDateTime!
+  insertedAt: AWSDateTime
 
   # Date of entity modification
-  updatedAt: AWSDateTime!
+  updatedAt: AWSDateTime
 }
 
 # COVID19 case statistics
 type CaseStatistic {
   # Total confirmed cases
-  total: Int!
+  total: Int
 
   # New confirmed cases
-  new: Int!
+  new: Int
 
   # Number of cases marked dead
-  dead: Int!
+  dead: Int
 
   # New cases marked dead
-  deadNew: Int!
+  deadNew: Int
 
   # Number of cases marked recovered
-  recovered: Int!
+  recovered: Int
 
   # New cases marked recovered
-  recoveredNew: Int!
+  recoveredNew: Int
 
   # Number of cases marked admitted and have not died or recovered
-  admitted: Int!
+  admitted: Int
 
   # New cases marked admitted and have not died or recovered
-  admittedNew: Int!
+  admittedNew: Int
 
   # Number of cases that have not died or recovered
-  active: Int!
+  active: Int
 
   # New cases that have not died or recovered
-  activeNew: Int!
+  activeNew: Int
 }
 
 # Selection item for user interface
