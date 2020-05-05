@@ -274,8 +274,8 @@ export async function getStatisticsAsync(region: string = '', province: string =
     let query = `
 	with cases as (
 	    select 
-	        (removaltype = 'Recovered' or daterecovered is not null) as isrecovered,
-	        (removaltype = 'Died' or datedied is not null) as isdead,
+	        (removaltype = 'Recovered') as isrecovered,
+	        (removaltype = 'Died') as isdead,
 	        (dateremoved is not null) as isremoved,
 	        admitted,
 	        dateconfirmed,
