@@ -125,6 +125,13 @@ resource "aws_lambda_permission" "case_collection_gateway" {
   principal     = "apigateway.amazonaws.com"
 }
 
+resource "aws_lambda_permission" "case_collection_cloudwatch" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.case_collection.function_name
+  principal     = "events.amazonaws.com"
+}
+
 resource "aws_iam_role" "case_collection" {
   name               = "case-collection"
   assume_role_policy = <<POLICY
