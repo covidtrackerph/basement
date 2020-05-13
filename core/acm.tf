@@ -1,3 +1,7 @@
+##################################################
+# API Gateway Certificate                        #
+##################################################
+
 resource "aws_acm_certificate" "api_cert" {
   domain_name       = local.api_domain
   validation_method = "DNS"
@@ -15,6 +19,10 @@ resource "aws_acm_certificate" "api_cert" {
 resource "aws_acm_certificate_validation" "api_cert" {
   certificate_arn = aws_acm_certificate.api_cert.arn
 }
+
+##################################################
+# AppSync  Certificate                           #
+##################################################
 
 resource "aws_acm_certificate" "graph_cert_east_1" {
   provider          = aws.us_east_1
@@ -36,6 +44,10 @@ resource "aws_acm_certificate_validation" "graph_cert_east_1" {
   certificate_arn = aws_acm_certificate.graph_cert_east_1.arn
 }
 
+##################################################
+# trackncovph.jclarino.com Certificate           #
+##################################################
+
 resource "aws_acm_certificate" "covid_tracker_ui_cert" {
   provider          = aws.us_east_1
   domain_name       = local.covid_tracker_ui_domain
@@ -55,3 +67,28 @@ resource "aws_acm_certificate_validation" "covid_tracker_ui_cert" {
   provider        = aws.us_east_1
   certificate_arn = aws_acm_certificate.covid_tracker_ui_cert.arn
 }
+
+##################################################
+# covidtracker.ph Certificate                    #
+##################################################
+
+resource "aws_acm_certificate" "covid_tracker_ui_alt_cert" {
+  provider          = aws.us_east_1
+  domain_name       = local.covid_tracker_ui_domain_alt
+  validation_method = "DNS"
+
+  tags = {
+    Name        = "Alternative Domain for Covid Tracker PH UI"
+    Environment = var.namespace
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Uncomment after validation
+# resource "aws_acm_certificate_validation" "covid_tracker_ui_cert" {
+#   provider        = aws.us_east_1
+#   certificate_arn = aws_acm_certificate.covid_tracker_ui_cert.arn
+# }
