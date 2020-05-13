@@ -1,7 +1,3 @@
-resource "aws_cloudfront_origin_access_identity" "covid_tracker_ui" {
-  comment = "Origin access identity for CovidTracker UI"
-}
-
 resource "random_string" "origin_id" {
   length           = 12
   special          = true
@@ -86,6 +82,9 @@ resource "aws_cloudfront_distribution" "appsync_distribution" {
 # =============================================== #
 # CovidTrackerPH UI Distribution                  #
 # =============================================== #
+resource "aws_cloudfront_origin_access_identity" "covid_tracker_ui" {
+  comment = "Origin access identity for CovidTracker UI"
+}
 
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
@@ -108,7 +107,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   #   }
 
   aliases = [
-    #local.something.url
+    local.covid_tracker_ui_domain
   ]
 
   # Prevent caching errors
@@ -162,9 +161,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
-    # ssl_support_method       = "sni-only"
-    # acm_certificate_arn      = "${aws_acm_certificate.cert.arn}"
-    # minimum_protocol_version = "TLSv1.1_2016"
+    ssl_support_method       = "sni-only"
+    acm_certificate_arn      = aws_acm_certificate_validation.covid_tracker_ui_cert.certificate_arn
+    minimum_protocol_version = "TLSv1.1_2016"
   }
 }

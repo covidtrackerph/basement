@@ -50,3 +50,8 @@ resource "aws_acm_certificate" "covid_tracker_ui_cert" {
     create_before_destroy = true
   }
 }
+
+resource "aws_acm_certificate_validation" "covid_tracker_ui_cert" {
+  provider        = aws.us_east_1
+  certificate_arn = aws_acm_certificate.covid_tracker_ui_cert.arn
+}
