@@ -73,8 +73,12 @@ resource "aws_acm_certificate_validation" "covid_tracker_ui_cert" {
 ##################################################
 
 resource "aws_acm_certificate" "covid_tracker_ui_alt_cert" {
-  provider          = aws.us_east_1
-  domain_name       = local.covid_tracker_ui_domain_alt
+  provider    = aws.us_east_1
+  domain_name = local.covid_tracker_ui_domain
+  subject_alternative_names = [
+    local.covid_tracker_ui_domain_alt
+  ]
+
   validation_method = "DNS"
 
   tags = {
