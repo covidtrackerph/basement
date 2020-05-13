@@ -322,6 +322,7 @@ data "archive_file" "static_ui_path_rewrite_lambda" {
 }
 
 resource "aws_lambda_function" "static_ui_path_rewrite" {
+  provider         = aws.us_east_1
   filename         = data.archive_file.static_ui_path_rewrite_lambda.output_path
   source_code_hash = filebase64sha256(data.archive_file.static_ui_path_rewrite_lambda.output_path)
   function_name    = "static-ui-path-rewrite-${var.namespace}"
