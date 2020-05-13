@@ -78,6 +78,7 @@ module "appsync_queries" {
     "region",
     "province",
     "city",
-    "dailyStatistic"
+    "dailyStatistic",
+    "locationStatistic"
   ]
 }

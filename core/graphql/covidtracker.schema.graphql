@@ -77,7 +77,7 @@ type Query {
     search: String,
     # Location type to search against
     searchType: LocationType
-  ): [LocationStatistic]
+  ): [LocationStatistic!]
 }
 
 type Accumulation {
