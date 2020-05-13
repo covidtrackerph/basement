@@ -311,11 +311,6 @@ resource "aws_cloudwatch_log_group" "graph_resolver" {
   retention_in_days = 14
 }
 
-data "aws_iam_policy" "lambda_basic_execution" {
-  arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
-
-
 ##################################################
 # Static path rewrite for serving UI             #
 ##################################################
