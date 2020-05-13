@@ -50,7 +50,7 @@ resource "aws_acm_certificate_validation" "graph_cert_east_1" {
 # * covidtracker.ph                              #
 ##################################################
 
-resource "aws_acm_certificate" "covid_tracker_ui_alt_cert" {
+resource "aws_acm_certificate" "covid_tracker_ui_cert" {
   provider    = aws.us_east_1
   domain_name = local.covid_tracker_ui_domain
   subject_alternative_names = [
