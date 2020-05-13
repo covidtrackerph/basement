@@ -9,6 +9,8 @@ import { AgeGenderDistribution } from '../models/age-gender-distribution';
 import { Case } from '../models/case';
 import { SelectionItem } from '../models/residence';
 import { DailyStatistic } from '../models/statistic';
+import { LocationType } from '../enums/location-type';
+import { LocationStatistic } from '../models/location-statistic';
 
 async function connectionFactory() {
     const { connectionString } = await getSecretValue<CovidRDS>(process.env.COVIDTRACKER_DB_CONNECTION_SECRET_ID!);
@@ -25,7 +27,7 @@ async function connectionFactory() {
     })
 }
 
-export async function getDailyStatisticAsync(type: CaseType, region?: string, province?: string, city? :string) {
+export async function getDailyStatisticAsync(type: CaseType, region?: string, province?: string, city?: string) {
     let query = `
     select
         date_trunc('day', {0}) as date,
@@ -627,4 +629,75 @@ export async function searchCitiesAsync(query: string, province: string = '', re
     let client = await connectionFactory();
     client.connect();
     return await client.query<SelectionItem>(sql).then(({ rows }) => rows).finally(() => { client.end() })
+}
+
+export async function getLocationStatisticsAsync(type: LocationType, search: string, searchType: LocationType) {
+    let sql = `
+        select 
+            case
+            when
+                length({0}) = 0
+            then
+                'FOR VALIDATION'
+            else
+                {0}
+            end as name, 
+            count(case when removaltype = 'Recovered' then true else null end) as recovered,
+            count(case when removaltype = 'Recovered' and dateremoved::date = now()::date then true else null end) as "recoveredNew",
+            count(case when removaltype = 'Died' then true else null end) as dead,
+            count(case when removaltype = 'Died' and dateremoved::date = now()::date then true else null end) as "deadNew",
+            count(case when removaltype is null or removaltype != '' then true else null end) as active,
+            count(case when (removaltype is null or removaltype != '') and dateconfirmed::date = now()::date then true else null end) as "activeNew",
+            count(case when (removaltype is null or removaltype != '') and admitted then true else null end) as admitted,
+            count(case when (removaltype is null or removaltype != '') and admitted and dateconfirmed::date = now()::date then true else null end) as "admittedNew",
+            count(*) as total,
+            count(case when dateconfirmed::date = now()::date then true else null end) as new
+        from 
+            covidtracker.cases
+        where
+            {1}
+        group by
+            {0}
+        order by 
+            case
+            when
+                {0} = ''
+            then
+                1
+            end,
+                {0} asc
+    `
+    let grouping: string;
+    switch (type) {
+        case LocationType.PROVINCE:
+            grouping = 'province'
+            break;
+        case LocationType.CITY:
+            grouping = 'city'
+            break;
+        default:
+        case LocationType.REGION:
+            grouping = 'region'
+            break;
+    }
+
+    let condition: string;
+    switch (searchType) {
+        case LocationType.PROVINCE:
+            condition = formatSqlString('province = {0}', search)
+            break;
+        case LocationType.CITY:
+            condition = formatSqlString('city = {0}', search)
+            break;
+        case LocationType.REGION:
+            condition = formatSqlString('region = {0}', search)
+            break;
+        default:
+            condition = 'true';
+            break;
+    }
+    sql = formatString(sql, grouping, condition)
+    let client = await connectionFactory();
+    client.connect();
+    return await client.query<LocationStatistic>(sql).then(({ rows }) => rows).finally(() => { client.end() })
 }

@@ -69,6 +69,15 @@ type Query {
     # City of the case
     city: String
   ): [DailyStatistic!]
+
+  locationStatistic(
+    # Location Type
+    type: LocationType!,
+    # Keyword to search for
+    search: String,
+    # Location type to search against
+    searchType: LocationType!
+  ): [LocationStatistic]
 }
 
 type Accumulation {
@@ -194,6 +203,42 @@ type SelectionItem {
   value: String
 }
 
+
+type LocationStatistic {
+  # Name of the location
+  name: String
+
+  # Total confirmed cases
+  total: Int
+
+  # New confirmed cases
+  new: Int
+
+  # Number of cases marked dead
+  dead: Int
+
+  # New cases marked dead
+  deadNew: Int
+
+  # Number of cases marked recovered
+  recovered: Int
+
+  # New cases marked recovered
+  recoveredNew: Int
+
+  # Number of cases marked admitted and have not died or recovered
+  admitted: Int
+
+  # New cases marked admitted and have not died or recovered
+  admittedNew: Int
+
+  # Number of cases that have not died or recovered
+  active: Int
+
+  # New cases that have not died or recovered
+  activeNew: Int
+}
+
 scalar AWSDateTime
 
 # Type of the case
@@ -203,4 +248,12 @@ enum Type {
   DIED
   RECOVERED
   ACTIVE
+}
+
+
+# Type of the location
+enum LocationType {
+  REGION
+  PROVINCE
+  CITY
 }
