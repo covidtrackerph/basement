@@ -44,3 +44,8 @@ output "graph_domain_validation" {
   value       = aws_acm_certificate.graph_cert_east_1.domain_validation_options
   description = "GraphQL Certificate domain name validation options"
 }
+
+output "covid_tracker_ui_domain_validation" {
+  value       = aws_acm_certificate.covid_tracker_ui_cert.domain_validation_options
+  description = "CovidTrackerPH UI Certificate domain name validation options"
+}

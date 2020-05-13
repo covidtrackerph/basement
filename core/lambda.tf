@@ -310,3 +310,58 @@ resource "aws_cloudwatch_log_group" "graph_resolver" {
   name              = "/aws/lambda/graph-resolver-${var.namespace}"
   retention_in_days = 14
 }
+
+data "aws_iam_policy" "lambda_basic_execution" {
+  arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+
+##################################################
+# Static path rewrite for serving UI             #
+##################################################
+
+data "archive_file" "static_ui_path_rewrite_lambda" {
+  type        = "zip"
+  source_dir  = "${path.module}/lambda/ui-path-rewrite/build/"
+  output_path = "${path.module}/lambda/ui-path-rewrite/function.zip"
+}
+
+resource "aws_lambda_function" "static_ui_path_rewrite" {
+  filename         = data.archive_file.static_ui_path_rewrite_lambda.output_path
+  source_code_hash = filebase64sha256(data.archive_file.static_ui_path_rewrite_lambda.output_path)
+  function_name    = "static-ui-path-rewrite-${var.environment}"
+  handler          = "index.handler"
+  role             = aws_iam_role.static_ui_path_rewrite_lambda.arn
+  runtime          = "nodejs10.x"
+  memory_size      = "128"
+  timeout          = 5
+  publish          = true
+}
+
+resource "aws_iam_role" "static_ui_path_rewrite_lambda" {
+  name = "static-ui-path-rewrite-lambda"
+
+  assume_role_policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": [
+          "lambda.amazonaws.com",
+          "edgelambda.amazonaws.com"
+        ]
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "static_ui_path_rewrite_lambda_logging" {
+  role       = aws_iam_role.static_ui_path_rewrite_lambda.name
+  policy_arn = data.aws_iam_policy.lambda_basic_execution.arn
+}

@@ -35,3 +35,17 @@ resource "aws_acm_certificate_validation" "graph_cert_east_1" {
   provider        = aws.us_east_1
   certificate_arn = aws_acm_certificate.graph_cert_east_1.arn
 }
+
+resource "aws_acm_certificate" "covid_tracker_ui_cert" {
+  domain_name       = local.covid_tracker_ui_domain
+  validation_method = "DNS"
+
+  tags = {
+    Name        = "Domain for Covid Tracker PH UI"
+    Environment = var.namespace
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}

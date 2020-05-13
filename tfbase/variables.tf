@@ -5,7 +5,7 @@ variable "region" {
 }
 
 variable "namespace" {
-    type = string
-    description = "Project namespace"
-    default = "prod"
+  type        = string
+  description = "Project namespace"
+  default     = "prod"
 }
