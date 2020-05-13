@@ -89,7 +89,7 @@ resource "aws_cloudfront_origin_access_identity" "covid_tracker_ui" {
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
     origin_id   = "S3-${aws_s3_bucket.covid_tracker_ui.bucket}"
-    domain_name = aws_s3_bucket.covid_tracker_ui.bucket_domain_name
+    domain_name = aws_s3_bucket.covid_tracker_ui.bucket_regional_domain_name
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.covid_tracker_ui.cloudfront_access_identity_path
