@@ -18,8 +18,6 @@ Todo documentation.
 
 # TFbase
 
-# Pipelines
-
 # Utilities
 
 # Diagram

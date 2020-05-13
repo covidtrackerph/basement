@@ -45,31 +45,9 @@ resource "aws_acm_certificate_validation" "graph_cert_east_1" {
 }
 
 ##################################################
-# trackncovph.jclarino.com Certificate           #
-##################################################
-
-resource "aws_acm_certificate" "covid_tracker_ui_cert" {
-  provider          = aws.us_east_1
-  domain_name       = local.covid_tracker_ui_domain
-  validation_method = "DNS"
-
-  tags = {
-    Name        = "Domain for Covid Tracker PH UI"
-    Environment = var.namespace
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_acm_certificate_validation" "covid_tracker_ui_cert" {
-  provider        = aws.us_east_1
-  certificate_arn = aws_acm_certificate.covid_tracker_ui_cert.arn
-}
-
-##################################################
-# covidtracker.ph Certificate                    #
+# UI certificates                                #
+# * trackncovph.jclarino.com                     #
+# * covidtracker.ph                              #
 ##################################################
 
 resource "aws_acm_certificate" "covid_tracker_ui_alt_cert" {
@@ -91,8 +69,7 @@ resource "aws_acm_certificate" "covid_tracker_ui_alt_cert" {
   }
 }
 
-# Uncomment after validation
 # resource "aws_acm_certificate_validation" "covid_tracker_ui_cert" {
 #   provider        = aws.us_east_1
-#   certificate_arn = aws_acm_certificate.covid_tracker_ui_cert.arn
+#   certificate_arn = aws_acm_certificate.covid_tracker_ui_alt_cert.arn
 # }
