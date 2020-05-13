@@ -317,8 +317,8 @@ resource "aws_cloudwatch_log_group" "graph_resolver" {
 
 data "archive_file" "static_ui_path_rewrite_lambda" {
   type        = "zip"
-  source_dir  = "${path.module}/lambda/ui-path-rewrite/build/"
-  output_path = "${path.module}/lambda/ui-path-rewrite/function.zip"
+  source_dir  = "${path.module}/lambda_functions/ui-path-rewrite/build/"
+  output_path = "${path.module}/lambda_functions/ui-path-rewrite/function.zip"
 }
 
 resource "aws_lambda_function" "static_ui_path_rewrite" {
