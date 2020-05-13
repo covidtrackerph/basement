@@ -76,7 +76,7 @@ type Query {
     # Keyword to search for
     search: String,
     # Location type to search against
-    searchType: LocationType!
+    searchType: LocationType
   ): [LocationStatistic]
 }
 
