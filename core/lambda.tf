@@ -324,7 +324,7 @@ data "archive_file" "static_ui_path_rewrite_lambda" {
 resource "aws_lambda_function" "static_ui_path_rewrite" {
   filename         = data.archive_file.static_ui_path_rewrite_lambda.output_path
   source_code_hash = filebase64sha256(data.archive_file.static_ui_path_rewrite_lambda.output_path)
-  function_name    = "static-ui-path-rewrite-${var.environment}"
+  function_name    = "static-ui-path-rewrite-${var.namespace}"
   handler          = "index.handler"
   role             = aws_iam_role.static_ui_path_rewrite_lambda.arn
   runtime          = "nodejs10.x"
