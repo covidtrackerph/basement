@@ -108,15 +108,14 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   #   }
 
   aliases = [
-    # local.covid_tracker_ui_domain,
-    # local.covid_tracker_ui_domain_alt
+    local.covid_tracker_ui_domain,
+    local.covid_tracker_ui_domain_alt
   ]
 
   viewer_certificate {
-    cloudfront_default_certificate = true
-    # ssl_support_method       = "sni-only"
-    # acm_certificate_arn      = aws_acm_certificate_validation.covid_tracker_ui_cert.certificate_arn
-    # minimum_protocol_version = "TLSv1.1_2016"
+    ssl_support_method       = "sni-only"
+    acm_certificate_arn      = aws_acm_certificate_validation.covid_tracker_ui_cert.certificate_arn
+    minimum_protocol_version = "TLSv1.1_2016"
   }
 
   # Prevent caching errors
