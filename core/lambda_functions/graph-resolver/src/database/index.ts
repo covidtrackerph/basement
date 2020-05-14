@@ -633,6 +633,12 @@ export async function searchCitiesAsync(query: string, province: string = '', re
 
 export async function getLocationStatisticsAsync(type: LocationType, search: string, searchType: LocationType) {
     let sql = `
+        with latest_date as (
+            select 
+                max(insertedat) 
+            from 
+                covidtracker.cases
+        )
         select 
             case
             when
@@ -643,15 +649,15 @@ export async function getLocationStatisticsAsync(type: LocationType, search: str
                 {0}
             end as name, 
             count(case when removaltype = 'Recovered' then true else null end) as recovered,
-            count(case when removaltype = 'Recovered' and dateremoved::date = now()::date then true else null end) as "recoveredNew",
+            count(case when removaltype = 'Recovered' and dateremoved::date = (select * from latest_date)::date then true else null end) as "recoveredNew",
             count(case when removaltype = 'Died' then true else null end) as dead,
-            count(case when removaltype = 'Died' and dateremoved::date = now()::date then true else null end) as "deadNew",
+            count(case when removaltype = 'Died' and dateremoved::date = (select * from latest_date)::date then true else null end) as "deadNew",
             count(case when removaltype is null or removaltype = '' then true else null end) as active,
-            count(case when (removaltype is null or removaltype = '') and dateconfirmed::date = now()::date then true else null end) as "activeNew",
+            count(case when (removaltype is null or removaltype = '') and dateconfirmed::date = (select * from latest_date)::date then true else null end) as "activeNew",
             count(case when (removaltype is null or removaltype != '') and admitted then true else null end) as admitted,
-            count(case when (removaltype is null or removaltype != '') and admitted and dateconfirmed::date = now()::date then true else null end) as "admittedNew",
+            count(case when (removaltype is null or removaltype != '') and admitted and dateconfirmed::date = (select * from latest_date)::date then true else null end) as "admittedNew",
             count(*) as total,
-            count(case when dateconfirmed::date = now()::date then true else null end) as new
+            count(case when dateconfirmed::date = (select * from latest_date)::date then true else null end) as new
         from 
             covidtracker.cases
         where
