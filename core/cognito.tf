@@ -24,6 +24,11 @@ resource "aws_cognito_user_pool" "covid_tracker_user_pool" {
     "preferred_username"
   ]
 
+  auto_verified_attributes = [
+    "email",
+    "phone_number"
+  ]
+
   username_configuration {
     case_sensitive = false
   }
