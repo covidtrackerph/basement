@@ -10,6 +10,7 @@
     "jsdom": "^16.2.2"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.51",
     "@types/jsdom": "^16.2.3",
     "@types/node": "^13.7.0",
     "@types/urijs": "^1.19.8",

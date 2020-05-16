@@ -1,7 +1,6 @@
-import { CloudFrontResponseHandler } from "./aws-types";
 import jsdom from "jsdom";
 
-const handler: CloudFrontResponseHandler = async event => {
+const handler: any = async (event: any) => {
     let { response, request } = event.Records[0].cf;
 
     let { body } = response;
