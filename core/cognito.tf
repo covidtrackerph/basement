@@ -2,12 +2,12 @@
 # COVID TrackerPH Main User Pool                  #
 # =============================================== #
 
-# # Using default domain
-# resource "aws_cognito_user_pool_domain" "covid_tracker" {
-#   certificate_arn = module.cognito_domain_cert.arn
-#   domain          = var.app_domain
-#   user_pool_id    = aws_cognito_user_pool.covid_tracker_user_pool.id
-# }
+# Using default domain
+resource "aws_cognito_user_pool_domain" "covid_tracker" {
+  domain       = "hermes-project"
+  user_pool_id = aws_cognito_user_pool.covid_tracker_user_pool.id
+}
+
 
 resource "aws_cognito_user_pool" "covid_tracker_user_pool" {
   name = "covid-tracker-user-pool-${var.namespace}"
