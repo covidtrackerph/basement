@@ -29,39 +29,32 @@ namespace CaseCollection
 
         public async Task<APIGatewayProxyResponse> RunAsync(APIGatewayProxyRequest request, ILambdaContext context)
         {
-            var cases = await _provider.GetCasesAsync();
-            return new APIGatewayProxyResponse
+            try
             {
-                StatusCode = (int)HttpStatusCode.OK,
-                Body = "{\"status\": \"success\"}",
-                Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
-            };
-            // try
-            // {
-            //     context.Logger.LogLine(request.Body);
-            //     context.Logger.LogLine("Fetching cases from source");
-            //     var cases = await _provider.GetCasesAsync();
-            //     context.Logger.LogLine("Deleting all records");
-            //     var affected = await _store.DeleteAllAsync();
-            //     context.Logger.LogLine($"Deleted {affected} records");
-            //     await _store.InsertAllAsync(cases);
-            //     context.Logger.LogLine($"Inserted {cases.Count()} cases");
-            //     return new APIGatewayProxyResponse
-            //     {
-            //         StatusCode = (int)HttpStatusCode.OK,
-            //         Body = "{\"status\": \"success\"}",
-            //         Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
-            //     };
-            // }
-            // catch (Exception exc)
-            // {
-            //     return new APIGatewayProxyResponse
-            //     {
-            //         StatusCode = (int)HttpStatusCode.BadRequest,
-            //         Body = "{\"status\": \"failed\", \"error\": \"" + exc.Message + "\"}",
-            //         Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
-            //     };
-            // }
+                context.Logger.LogLine(request.Body);
+                context.Logger.LogLine("Fetching cases from source");
+                var cases = await _provider.GetCasesAsync();
+                context.Logger.LogLine("Deleting all records");
+                var affected = await _store.DeleteAllAsync();
+                context.Logger.LogLine($"Deleted {affected} records");
+                await _store.InsertAllAsync(cases);
+                context.Logger.LogLine($"Inserted {cases.Count()} cases");
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = (int)HttpStatusCode.OK,
+                    Body = "{\"status\": \"success\"}",
+                    Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
+                };
+            }
+            catch (Exception exc)
+            {
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    Body = "{\"status\": \"failed\", \"error\": \"" + exc.Message + "\"}",
+                    Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
+                };
+            }
         }
     }
 
