@@ -11,7 +11,6 @@ const handler: CloudFrontResponseHandler = (event, _, callback) => {
         body = [headEnd[0], '\t\twasap broski\n\t</head>', headEnd[1]].join('\n')
         response.body = body;
     }
-    return response;
     //Get contents of response
     // const response = event.Records[0].cf.response;
     const headers = response.headers;
