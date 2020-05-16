@@ -15,6 +15,9 @@ const handler: CloudFrontResponseHandler = (event, _, callback) => {
     //Get contents of response
     const response = event.Records[0].cf.response;
     const headers = response.headers;
+    
+    console.log(JSON.stringify(headers));
+    console.log(response.body);
 
     //Set new headers 
     headers['strict-transport-security'] = [{ key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubdomains; preload' }];
