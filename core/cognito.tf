@@ -50,9 +50,10 @@ resource "aws_cognito_user_pool" "covid_tracker_user_pool" {
     sns_caller_arn = aws_iam_role.sms_role.arn
   }
 
-  software_token_mfa_configuration {
-    enabled = false
-  }
+  # Comment this out once MFA is enabled
+  #   software_token_mfa_configuration {
+  #     enabled = false
+  #   }
 
   device_configuration {
     # Device is only remembered on user prompt.
