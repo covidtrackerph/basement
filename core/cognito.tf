@@ -191,9 +191,7 @@ resource "aws_cognito_user_pool_client" "user_management" {
   write_attributes = [
     "address",
     "email",
-    "email_verified",
     "phone_number",
-    "phone_number_verified",
     "birthdate",
     "family_name",
     "gender",
@@ -205,7 +203,6 @@ resource "aws_cognito_user_pool_client" "user_management" {
     "picture",
     "preferred_username",
     "profile",
-    "updated_at",
     "website",
     "zoneinfo"
   ]
