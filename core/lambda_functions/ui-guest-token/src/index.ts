@@ -1,4 +1,4 @@
-const handler: CloudFrontResponseHandler = async (event) => {
+const handler: CloudFrontResponseHandler = (event, _, callback) => {
     // let { response } = event.Records[0].cf;
     // let { body } = response;
 
@@ -23,7 +23,8 @@ const handler: CloudFrontResponseHandler = async (event) => {
     headers['x-frame-options'] = [{ key: 'X-Frame-Options', value: 'DENY' }];
     headers['x-xss-protection'] = [{ key: 'X-XSS-Protection', value: '1; mode=block' }];
     headers['referrer-policy'] = [{ key: 'Referrer-Policy', value: 'same-origin' }];
-    return response;
+    response.headers = headers;
+    callback(null, response);
 };
 
 export { handler };
