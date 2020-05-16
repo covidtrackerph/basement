@@ -142,6 +142,12 @@ resource "aws_cognito_user_pool" "covid_tracker_user_pool" {
   }
 }
 
+resource "aws_cognito_user_group" "guest_user" {
+  name         = "Guest-User"
+  user_pool_id = aws_cognito_user_pool.covid_tracker_user_pool.id
+  description  = "Managed by Terraform"
+}
+
 resource "aws_cognito_user_pool_client" "covid_tracker" {
   name            = "covid-tracker-client-${var.namespace}"
   user_pool_id    = aws_cognito_user_pool.covid_tracker_user_pool.id

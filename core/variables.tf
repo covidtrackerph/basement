@@ -10,7 +10,7 @@ variable "namespace" {
   default     = "prod"
 }
 
-variable "global_tags" { }
+variable "global_tags" {}
 
 variable "user_management_callback_urls" {
   type        = list(string)

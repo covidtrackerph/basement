@@ -14,7 +14,8 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: actions/checkout@master
-      - run: 'cp -a core/$BASEMENT_ENV/. core/'
+      - name: 'Copy namespace files to root'
+        run: 'cp -a core/$BASEMENT_ENV/. core/'
       - name: 'Setup dotnet'
         uses: actions/setup-dotnet@v1
         with:
