@@ -387,7 +387,7 @@ resource "aws_lambda_function" "guest_token_inserter" {
 }
 
 resource "aws_iam_role" "guest_token_inserter" {
-  name = "static-ui-path-rewrite-lambda"
+  name = "guest-token-inserter-lambda"
 
   assume_role_policy = <<POLICY
 {
