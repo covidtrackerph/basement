@@ -328,7 +328,7 @@ resource "aws_lambda_function" "static_ui_path_rewrite" {
   function_name    = "static-ui-path-rewrite-${var.namespace}"
   handler          = "index.handler"
   role             = aws_iam_role.static_ui_path_rewrite_lambda.arn
-  runtime          = "nodejs10.x"
+  runtime          = "nodejs12.x"
   memory_size      = "128"
   timeout          = 5
   publish          = true
@@ -359,5 +359,57 @@ POLICY
 
 resource "aws_iam_role_policy_attachment" "static_ui_path_rewrite_lambda_logging" {
   role       = aws_iam_role.static_ui_path_rewrite_lambda.name
+  policy_arn = data.aws_iam_policy.lambda_basic_execution.arn
+}
+
+
+####################################################
+# Guest token insertion to cloudfront distribution #
+####################################################
+
+data "archive_file" "guest_token_inserter" {
+  type        = "zip"
+  source_dir  = "${path.module}/lambda_functions/ui-guest-token/build/"
+  output_path = "${path.module}/lambda_functions/ui-guest-token/function.zip"
+}
+
+resource "aws_lambda_function" "guest_token_inserter" {
+  provider         = aws.us_east_1
+  filename         = data.archive_file.guest_token_inserter.output_path
+  source_code_hash = filebase64sha256(data.archive_file.guest_token_inserter.output_path)
+  function_name    = "guest-token-inserter-${var.namespace}"
+  handler          = "index.handler"
+  role             = aws_iam_role.guest_token_inserter.arn
+  runtime          = "nodejs12.x"
+  memory_size      = "128"
+  timeout          = 5
+  publish          = true
+}
+
+resource "aws_iam_role" "guest_token_inserter" {
+  name = "static-ui-path-rewrite-lambda"
+
+  assume_role_policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": [
+          "lambda.amazonaws.com",
+          "edgelambda.amazonaws.com"
+        ]
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "guest_token_inserter_logging" {
+  role       = aws_iam_role.guest_token_inserter.name
   policy_arn = data.aws_iam_policy.lambda_basic_execution.arn
 }
