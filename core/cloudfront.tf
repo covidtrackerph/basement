@@ -155,9 +155,9 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     }
 
     lambda_function_association {
-      event_type   = "viewer-response"
+      event_type   = "origin-response"
       lambda_arn   = aws_lambda_function.guest_token_inserter.qualified_arn
-      include_body = false
+      include_body = true
     }
   }
 
