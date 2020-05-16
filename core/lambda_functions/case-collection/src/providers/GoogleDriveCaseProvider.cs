@@ -5,11 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using CaseCollection.Models;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
+using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -28,23 +31,57 @@ namespace CaseCollection.Providers
 
         public async Task<IEnumerable<Case>> GetCasesAsync()
         {
+
             var covidMainFolder = await ListFilesAsync(CovidData.RootFolderId);
 
-            var latestDataDropFolder = covidMainFolder.Files
-                .Where(q => q.Name?.Contains("DOH COVID Data Drop_") ?? false)
-                .OrderByDescending(q => q.CreatedTime).FirstOrDefault();
+            // Get the PDF File
+            var pdfDriveFileInfo = covidMainFolder.Files.Where(q => q.Name?.Contains("READ ME") ?? false).OrderByDescending(q => q.CreatedTime).FirstOrDefault();
+            var pdfDriveFile = await GetFileAsync(pdfDriveFileInfo.Id);
+            var pdf = await DownloadFileAsync(pdfDriveFile.WebContentLink, "text/pdf");
 
-            var latestCSV = await ListFilesAsync(latestDataDropFolder.Id);
+            var doc = ExtractTextFromPdf(pdf);
 
-            var latestCaseCSVFile = latestCSV.Files
+            // Get the bit.ly link
+
+            var index = doc.IndexOf("Link to DOH Data Drop");
+            var linkString = doc.Substring(index);
+            var newLineIndex = linkString.IndexOf('\n');
+            var colonIndex = linkString.IndexOf(':') + 1;
+            var bitLyURL = linkString.Substring(colonIndex, newLineIndex - colonIndex);
+            bitLyURL = bitLyURL.Trim();
+            string driveId;
+
+            // Extract drive ID from bit.ly request headers
+            using (var client = new HttpClient())
+            {
+                var d = await client.GetAsync($"https://{bitLyURL}");
+                var path = d.RequestMessage.RequestUri.AbsolutePath;
+                driveId = path.Split('/').LastOrDefault();
+            }
+
+            // Download the csv
+            var latestCSVDriveInfo = await ListFilesAsync(driveId);
+            var latestCaseCSVDriveFileInfo = latestCSVDriveInfo.Files
                 .Where(q => (q.Name?.Contains("Case Information") ?? false) && q.MimeType == "text/csv")
                 .OrderByDescending(q => q.CreatedTime).FirstOrDefault();
+            var caseCSV = await GetFileAsync(latestCaseCSVDriveFileInfo.Id);
+            var csv = await DownloadFileAsync(caseCSV.WebContentLink, "text/csv");
+            var csvString = Encoding.UTF8.GetString(csv);
 
-            var caseCSV = await GetFileAsync(latestCaseCSVFile.Id);
+            return ParseCases(csvString);
+        }
 
-            var csv = await GetCsvAsync(caseCSV.WebContentLink);
-
-            return ParseCases(csv);
+        public static string ExtractTextFromPdf(byte[] path)
+        {
+            using (PdfReader reader = new PdfReader(path))
+            {
+                StringBuilder text = new StringBuilder();
+                for (int i = 1; i <= reader.NumberOfPages; i++)
+                {
+                    text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
+                }
+                return text.ToString();
+            }
         }
 
         private async Task<DriveFile> ListFilesAsync(string fileId)
@@ -86,19 +123,19 @@ namespace CaseCollection.Providers
             }
         }
 
-        private async Task<string> GetCsvAsync(string downloadLink)
+        private async Task<byte[]> DownloadFileAsync(string downloadLink, string fileType)
         {
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/csv"));
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(fileType));
 
             var response = await _client.GetAsync(downloadLink);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsByteArrayAsync();
             if (response.IsSuccessStatusCode)
             {
                 return content;
             }
             else
             {
-                throw new Exception(content);
+                throw new Exception("Error downloading file");
             }
         }
 
