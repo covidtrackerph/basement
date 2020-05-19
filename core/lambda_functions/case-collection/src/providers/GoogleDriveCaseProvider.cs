@@ -31,8 +31,16 @@ namespace CaseCollection.Providers
 
         public async Task<IEnumerable<Case>> GetCasesAsync()
         {
+            // Extract main drive ID from bit.ly request headers
+            string rootPDFId;
+            using (var client = new HttpClient())
+            {
+                var d = await client.GetAsync($"http://bit.ly/dohcovid19data");
+                var path = d.RequestMessage.RequestUri.AbsolutePath;
+                rootPDFId = path.Split('/').LastOrDefault();
+            }
 
-            var covidMainFolder = await ListFilesAsync(CovidData.RootFolderId);
+            var covidMainFolder = await ListFilesAsync(rootPDFId);
 
             // Get the PDF File
             var pdfDriveFileInfo = covidMainFolder.Files.Where(q => q.Name?.Contains("READ ME") ?? false).OrderByDescending(q => q.CreatedTime).FirstOrDefault();
