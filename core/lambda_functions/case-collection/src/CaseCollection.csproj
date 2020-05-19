@@ -4,13 +4,18 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
         <AWSProjectType>Lambda</AWSProjectType>
+        <PackageProjectUrl>https://github.com/covidtrackerph/basement</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/covidtrackerph/basement</RepositoryUrl>
+        <Authors>Daryl Clarino</Authors>
+        <Product>Covid Tracker PH</Product>
+        <Description>COVID19 data collection</Description>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="CsvHelper" Version="15.0.5" />
         <PackageReference Include="Dapper" Version="2.0.35" />
-        <PackageReference Include="GrapeCity.Documents.Pdf" Version="3.1.0.513" />
-        <PackageReference Include="iTextSharp" Version="5.5.13.1" />
+        <PackageReference Include="itext7" Version="7.1.11" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.3" />
         <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.3" />
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.3" />

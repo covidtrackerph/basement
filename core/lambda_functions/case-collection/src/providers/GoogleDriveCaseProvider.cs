@@ -9,10 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CaseCollection.Models;
 using CsvHelper;
-using CsvHelper.Configuration;
-using CsvHelper.TypeConversion;
-using iTextSharp.text.pdf;
-using iTextSharp.text.pdf.parser;
+using iText.IO.Source;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas.Parser;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -81,15 +80,28 @@ namespace CaseCollection.Providers
 
         public static string ExtractTextFromPdf(byte[] path)
         {
-            using (PdfReader reader = new PdfReader(path))
+            var source = new RandomAccessSourceFactory().CreateSource(new MemoryStream(path).ToArray());
+            using (PdfReader reader = new PdfReader(source, new ReaderProperties()))
+            using (PdfDocument pdfDoc = new PdfDocument(reader))
             {
                 StringBuilder text = new StringBuilder();
-                for (int i = 1; i <= reader.NumberOfPages; i++)
+                for (int i = 1; i <= pdfDoc.GetNumberOfPages(); i++)
                 {
-                    text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
+                    var pageText = PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(i));
+                    text.Append(pageText);
                 }
                 return text.ToString();
             }
+            // var pdfDoc = new PdfDocument(path);
+            // using (PdfReader reader = new PdfReader("asd"))
+            // {
+            //     StringBuilder text = new StringBuilder();
+            //     for (int i = 1; i <= reader.NumberOfPages; i++)
+            //     {
+            //         text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
+            //     }
+            //     return text.ToString();
+            // }
         }
 
         private async Task<DriveFile> ListFilesAsync(string fileId)
