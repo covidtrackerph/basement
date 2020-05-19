@@ -35,7 +35,7 @@ namespace CaseCollection.Providers
             string rootPDFId;
             using (var client = new HttpClient())
             {
-                var d = await client.GetAsync($"http://bit.ly/dohcovid19data");
+                var d = await client.GetAsync($"http://bit.ly/datadropph");
                 var path = d.RequestMessage.RequestUri.AbsolutePath;
                 rootPDFId = path.Split('/').LastOrDefault();
             }
