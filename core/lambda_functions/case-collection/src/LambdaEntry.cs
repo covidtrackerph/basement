@@ -51,7 +51,7 @@ namespace CaseCollection
                 return new APIGatewayProxyResponse
                 {
                     StatusCode = (int)HttpStatusCode.BadRequest,
-                    Body = "{\"status\": \"failed\", \"error\": \"" + exc.Message + "\"}",
+                    Body = "{\"status\": \"failed\", \"error\": \"" + exc.Message + "\", \"stackTrace\":\"" + exc.StackTrace + "\"}",
                     Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
                 };
             }
