@@ -48,10 +48,12 @@ namespace CaseCollection
             }
             catch (Exception exc)
             {
+                context.Logger.LogLine(exc.Message);
+                context.Logger.LogLine(exc.StackTrace);
                 return new APIGatewayProxyResponse
                 {
                     StatusCode = (int)HttpStatusCode.BadRequest,
-                    Body = "{\"status\": \"failed\", \"error\": \"" + exc.Message + "\", \"stackTrace\":\"" + exc.StackTrace + "\"}",
+                    Body = "{\"status\": \"failed\", \"error\": \"" + exc.Message + "\"}",
                     Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
                 };
             }
