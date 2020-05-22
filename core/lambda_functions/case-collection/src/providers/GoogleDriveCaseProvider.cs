@@ -34,7 +34,7 @@ namespace CaseCollection.Providers
             string rootPDFId;
             using (var client = new HttpClient())
             {
-                var d = await client.GetAsync($"http://bit.ly/datadropph");
+                var d = await client.GetAsync($"https://bit.ly/datadropph");
                 var path = d.RequestMessage.RequestUri.AbsolutePath;
                 rootPDFId = path.Split('/').LastOrDefault();
             }
