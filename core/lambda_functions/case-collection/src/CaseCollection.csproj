@@ -4,6 +4,7 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
         <AWSProjectType>Lambda</AWSProjectType>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <PackageProjectUrl>https://github.com/covidtrackerph/basement</PackageProjectUrl>
         <RepositoryUrl>https://github.com/covidtrackerph/basement</RepositoryUrl>
         <Authors>Daryl Clarino</Authors>

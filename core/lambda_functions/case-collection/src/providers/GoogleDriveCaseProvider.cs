@@ -54,7 +54,8 @@ namespace CaseCollection.Providers
             var linkString = doc.Substring(index);
             var newLineIndex = linkString.IndexOf('\n');
             var colonIndex = linkString.IndexOf(':') + 1;
-            var bitLyURL = linkString.Substring(colonIndex, newLineIndex - colonIndex);
+            var bitLyURL = linkString.Substring(colonIndex + 1, newLineIndex - colonIndex);
+
             bitLyURL = bitLyURL.Trim();
             string driveId;
 
@@ -92,16 +93,6 @@ namespace CaseCollection.Providers
                 }
                 return text.ToString();
             }
-            // var pdfDoc = new PdfDocument(path);
-            // using (PdfReader reader = new PdfReader("asd"))
-            // {
-            //     StringBuilder text = new StringBuilder();
-            //     for (int i = 1; i <= reader.NumberOfPages; i++)
-            //     {
-            //         text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
-            //     }
-            //     return text.ToString();
-            // }
         }
 
         private async Task<DriveFile> ListFilesAsync(string fileId)
