@@ -63,7 +63,38 @@ resource "aws_api_gateway_deployment" "covid_tracker" {
   stage_name = var.namespace
 }
 
+##################################################
+# Test API                                       #
+##################################################
 
+resource "aws_api_gateway_resource" "test" {
+  rest_api_id = aws_api_gateway_rest_api.covid_tracker.id
+  parent_id   = aws_api_gateway_rest_api.covid_tracker.root_resource_id
+  path_part   = "test"
+}
+
+resource "aws_api_gateway_method" "test" {
+  rest_api_id   = aws_api_gateway_rest_api.covid_tracker.id
+  resource_id   = aws_api_gateway_resource.test.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "test" {
+  rest_api_id = aws_api_gateway_rest_api.covid_tracker.id
+  resource_id = aws_api_gateway_resource.test.id
+  http_method = aws_api_gateway_method.test.http_method
+  type        = "MOCK"
+  request_templates = {
+    "application/json" = <<EOF
+{"covidId": 500}
+EOF
+  }
+}
+
+resource "aws_api_gateway_integration_response" "testid" {
+
+}
 
 ##################################################
 # Graph Lambda                                   #
