@@ -107,7 +107,7 @@ resource "aws_lambda_function" "case_collection" {
   runtime          = "dotnetcore3.1"
   timeout          = 900
   publish          = false
-  memory_size      = 256
+  memory_size      = 512
   role             = aws_iam_role.case_collection.arn
   environment {
     variables = {
