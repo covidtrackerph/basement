@@ -12,6 +12,10 @@ jobs:
     name: 'Terraform'
     runs-on: ubuntu-latest
     steps:
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.12.25
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: 'Checkout'
         uses: actions/checkout@master
       - name: 'Copy namespace files to root'
@@ -35,14 +39,6 @@ jobs:
           cd core/lambda_functions
           for func in $(find . -maxdepth 1 -type d -exec sh -c '[ -f "$0"/package.json ]' '{}' \; -print); do cd $func && yarn && yarn build && cd ..; done
       - name: 'Terraform Init'
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 0.12.25
-          github-token: ${{ secrets.GITHUB_TOKEN }}
         run: terraform init ./core
       - name: 'Terraform Apply'
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 0.12.25
-          github-token: ${{ secrets.GITHUB_TOKEN }}
         run: terraform apply ./core -lock=false
