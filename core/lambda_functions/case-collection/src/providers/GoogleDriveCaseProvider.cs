@@ -52,9 +52,10 @@ namespace CaseCollection.Providers
 
             var index = doc.IndexOf("Link to DOH Data Drop");
             var linkString = doc.Substring(index);
-            var newLineIndex = linkString.IndexOf('\n');
-            var colonIndex = linkString.IndexOf(':') + 1;
-            var bitLyURL = linkString.Substring(colonIndex + 1, newLineIndex - colonIndex);
+            var newLineIndex = linkString.IndexOf('\n') + 1;
+            linkString = linkString.Substring(newLineIndex);
+            var colonIndex = linkString.IndexOf('\n');
+            var bitLyURL = linkString.Substring(0, colonIndex);
 
             bitLyURL = bitLyURL.Trim();
             string driveId;
@@ -62,7 +63,7 @@ namespace CaseCollection.Providers
             // Extract drive ID from bit.ly request headers
             using (var client = new HttpClient())
             {
-                var d = await client.GetAsync($"https://{bitLyURL}");
+                var d = await client.GetAsync($"{bitLyURL}");
                 var path = d.RequestMessage.RequestUri.AbsolutePath;
                 driveId = path.Split('/').LastOrDefault();
             }
