@@ -22,7 +22,7 @@ namespace CaseCollection.Providers
         public string RemovalType { get; set; }
 
         /// Date of removal
-        public DateTime? DateRepRem { get; set; }
+        // public DateTime? DateRepRem { get; set; }
 
         // Yes, No or null
         public string Admitted { get; set; }

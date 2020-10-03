@@ -74,10 +74,10 @@ namespace CaseCollection.Providers
                 .Where(q => (q.Name?.Contains("Case Information") ?? false) && q.MimeType == "text/csv")
                 .OrderByDescending(q => q.CreatedTime).FirstOrDefault();
             var caseCSV = await GetFileAsync(latestCaseCSVDriveFileInfo.Id);
-            var csv = await DownloadFileAsync(caseCSV.WebContentLink, "text/csv");
-            var csvString = Encoding.UTF8.GetString(csv);
+            var csv = await DownloadFileAsStreamAsync(caseCSV.WebContentLink, "text/csv");
+            // var csvString = Encoding.UTF8.GetString(csv);
 
-            return ParseCases(csvString);
+            return ParseCasesStream(csv);
         }
 
         public static string ExtractTextFromPdf(byte[] path)
@@ -151,6 +151,22 @@ namespace CaseCollection.Providers
             }
         }
 
+        private async Task<Stream> DownloadFileAsStreamAsync(string downloadLink, string fileType)
+        {
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(fileType));
+
+            var response = await _client.GetAsync(downloadLink);
+            var content = await response.Content.ReadAsStreamAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                return content;
+            }
+            else
+            {
+                throw new Exception("Error downloading file");
+            }
+        }
+
         public IEnumerable<Case> ParseCases(string caseCsv)
         {
             using (var reader = new StringReader(caseCsv))
@@ -169,7 +185,43 @@ namespace CaseCollection.Providers
                         DateConfirmed = q.DateRepConf,
                         DateRecovered = q.DateRecover,
                         DateDied = q.DateDied,
-                        DateRemoved = q.DateRepRem,
+                        DateRemoved = q.DateDied != null ? q.DateDied : q.DateRecover,
+                        RemovalType = q.RemovalType,
+                        Admitted = q.Admitted == "Yes",
+                        Region = q.RegionRes,
+                        Province = q.ProvRes,
+                        City = q.CityMunRes,
+                        HealthStatus = q.HealthStatus,
+                        InsertedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    });
+                }
+                catch (Exception exc)
+                {
+                    throw exc;
+                }
+            }
+        }
+
+        public IEnumerable<Case> ParseCasesStream(Stream caseCsv)
+        {
+            using (var reader = new StreamReader(caseCsv))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                try
+                {
+                    var records = csv.GetRecords<DriveCaseCode>().ToList();
+
+                    return records.Select(q => new Case
+                    {
+                        CaseNo = q.CaseCode,
+                        Age = q.Age,
+                        AgeGroup = q.AgeGroup,
+                        Sex = q.Sex,
+                        DateConfirmed = q.DateRepConf,
+                        DateRecovered = q.DateRecover,
+                        DateDied = q.DateDied,
+                        DateRemoved = q.DateDied != null ? q.DateDied : q.DateRecover,
                         RemovalType = q.RemovalType,
                         Admitted = q.Admitted == "Yes",
                         Region = q.RegionRes,
