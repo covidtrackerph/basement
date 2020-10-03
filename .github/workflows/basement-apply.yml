@@ -46,7 +46,7 @@ jobs:
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.12.23
-          tf_actions_subcommand: 'apply'
+          tf_actions_subcommand: 'apply -lock=false'
           tf_actions_working_dir: 'core'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
