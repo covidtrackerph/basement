@@ -7,7 +7,7 @@
       "build": "tsc && cp package.json yarn.lock build && cd build && yarn --production"
     },
     "dependencies": {
-      "urijs": "^1.19.2"
+      "urijs": "^1.19.7"
     },
     "devDependencies": {
       "@types/aws-lambda": "^8.10.40",
